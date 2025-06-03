@@ -6,9 +6,9 @@ library("survminer")
 osdata<-read.table("D:\\aging\\data\\GBM-NIHMS746836-supplement-78.txt" , sep = "\t", header = T,stringsAsFactors = F)
 AverageThickness_BAatlas<-read.table("D:\\aging\\RESULT\\6radiomic\\feature7\\lh_AverageThickness_BAatlas.txt" , sep = "\t", header = T,stringsAsFactors = F)
 group_feature<-merge(osdata,AverageThickness_BAatlas,by.x = "Case",by.y = "lh.aparc.BAatlas.thickness")
-group_feature$group="Young"
-group_feature$group[group_feature$Age>=40]="Middle"
-group_feature$group[group_feature$Age>=60]="Late"
+osdata$group="Young"
+osdata$group[osdata$Age>=40]="Middle"
+osdata$group[osdata$Age>=60]="Late"
 
 osdata_out<-as.data.frame(cbind(group_feature$Case,group_feature$Age,group_feature$group,group_feature$Survival..months.,group_feature$Vital.status..1.dead.)) 
 osdata_out$days<-as.numeric(osdata_out$V4) *30
@@ -26,6 +26,10 @@ ggsurvplot(sfit,data = osdata,
            legend = "top", 
            legend.title = "group",
            palette = c("#1f2a6b", "#446799","#a3ced6"))
+
+write.table(osdata,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\A.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+
 #################### CAS #######################
 
 GBM_gene<-read.table("D:\\aging\\GBM\\HT_HG-U133A.txt",header=T,sep = "\t", quote = "",stringsAsFactors = F,check.names=FALSE)
@@ -33,9 +37,7 @@ case<-GBM_gene[,-grep("\\-11$",colnames(GBM_gene))]
 
 osdata<-read.table("D:\\aging\\data\\GBM-NIHMS746836-supplement-78.txt" , sep = "\t", header = T,stringsAsFactors = F)
 osdata_age<-osdata[,c(1,15,16)]
-
 CAS_genes<-read.table("D:\\aging\\RESULT\\2-3-CAS\\B_247genes.txt",header=T,sep = "\t", quote = "")
-
 CAS_genes_EXP<-merge(case,CAS_genes,by.x="sample",by.y="Var1")[,1:ncol(case)]
 
 
@@ -53,24 +55,17 @@ names(sigData2)<-sigData1[1,]
 sig <- createGeneSignature(name = "Common Aging Score", sigData = sigData2)
 mySignatures <- c(sig)
 vis <- Vision(data = CAS_genes_EXP, signatures = mySignatures,projection_methods="tSNE10")
-
 options(mc.cores = 10)
-
 vis <- analyze(vis)
-
 
 tsne <- getProjections(vis)[["tSNE10"]]
 sigScores <- getSignatureScores(vis)[, "Common Aging Score"]
 sigScores1<-cbind(names(sigScores),sigScores)
 colnames(sigScores1)<-c("Sample_geo_accession1","sigScores")
 sigScores1<-as.data.frame(sigScores1)
-sigScores1$Case<-sapply(sigScores1$Sample_geo_accession1, function(x){gsub("-01","",x) } )
+sigScores1$Case<-sapply(sigScores1$Sample_geo_accession1, function(x){substr(x,1,12) } )
 sigScores_group<-merge(sigScores1,osdata_age,by= "Case" )
-
-
-
-
-write.table(sigScores_group,"sigScores_group.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group,"D:\\aging\\RESULT\\6radiomic\\sigScores_group.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 sigScores_group$group1=70
 sigScores_group$group1[sigScores_group$Age < 70]="60"
@@ -78,15 +73,13 @@ sigScores_group$group1[sigScores_group$Age < 60]="50"
 sigScores_group$group1[sigScores_group$Age < 50]="40"
 sigScores_group$group1[sigScores_group$Age < 40]="30"
 sigScores_group$group1[sigScores_group$Age < 30]="20"
-
+write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 P3<-ggplot(sigScores_group,aes(x=as.character(group1) ,y=as.numeric(sigScores) ,fill=as.character(group1)))+ 
   stat_boxplot(geom = "errorbar")+
   geom_boxplot(color="azure4",outlier.colour="red",
-               outlier.fill="red",outlier.size=1,outlier.alpha=0#notch=TRUE,notchwidth = 0.8
-  )+  
-  
+               outlier.fill="red",outlier.size=1,outlier.alpha=0)+  
   stat_compare_means(method = "anova" )+
   theme_classic()+  
   scale_fill_manual(values = c("#B3332B",
@@ -147,6 +140,7 @@ output1$group[as.numeric(output1$icc_value)>=0]<-"0"
 output1$group[as.numeric(output1$icc_value)>=0.75]<-"75"
 output1$group[as.numeric(output1$icc_value)>=0.9]<-"9"
 
+write.table(output1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ggplot(output1, aes(V1,as.numeric(icc_value))) +
   geom_jitter(aes(color = group), size = 0.001)+
@@ -206,27 +200,19 @@ for (k in 1:1000) {
   #test_data<-cbind(test_sample,test_info[,-1])
   test_data<-cbind(test_sample,test_info$group )
 
-  #rfPermut() 封装了 randomForest() 的方法，因此在给定数据和运行参数一致的情况下，两个函数结果也是一致的
-  #并在这里额外通过 nrep 参数执行 1000 次的随机置换以评估变量显著性的 p 值
-  #若数据量较大，可通过 num.cores 参数设置多线程运算
+
   set.seed(123)
   otu_rfP <- rfPermute(train_data[,-785], train_data[,785], importance = TRUE, ntree = 500, nrep = 1000, num.cores = 1)
 
-  #提取预测变量（细菌 OTU）的重要性得分（标准化后的得分）
   importance_otu.scale <- data.frame(importance(otu_rfP, scale = TRUE), check.names = FALSE)
-  
   importance_otu.scale$OTU_name <- rownames(importance_otu.scale)
   importance_otu.scale$OTU_name <- factor(importance_otu.scale$OTU_name, levels = importance_otu.scale$OTU_name)
-  
   importance_otu.scale_sig<-importance_otu.scale[importance_otu.scale$`%IncMSE.pval`<=0.05,]
-  
   if(nrow(importance_otu.scale_sig)>0){
     train_data1<-as.data.frame(train_data_group[,c(sapply(importance_otu.scale_sig$OTU_name,function(x){which(colnames(train_data_group)==x)}),785)]) 
     test_data1<-as.data.frame(test_data[,c(sapply(importance_otu.scale_sig$OTU_name,function(x){which(colnames(test_data)==x)}),785)]) 
-    
     train_data2<- cbind(matrix(as.numeric(as.matrix(train_data1) ),ncol = ncol(train_data1)) ) 
     test_data2<- cbind(matrix(as.numeric(as.matrix(test_data1) ),ncol = ncol(test_data1)) ) 
-    
     
     set.seed(123)
     rf_train<-randomForest(train_data2[,-ncol(train_data2)], train_data2[,ncol(train_data2)],
@@ -246,27 +232,21 @@ for (k in 1:1000) {
   print(k)
 }
 feature_fre<-as.data.frame(table(feature_success_all))
-
 write.table(feature_fre,"D:\\aging\\RESULT\\6radiomic\\feature_fre1_100.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
 write.table(pout,"D:\\aging\\RESULT\\6radiomic\\pout1_100.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 write.table(aucout,"D:\\aging\\RESULT\\6radiomic\\aucout1_100.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 
 aucout<-read.table("D:\\aging\\RESULT\\6radiomic\\aucout1_100.txt" , sep = "\t", header = T,stringsAsFactors = F)
-data <- data.frame(
-  var1 = aucout$auc
-)
-data <- data.frame(
-  var2 = aucout$OTU_name[aucout$auc>=0.8]
-)
+data <- data.frame(var1 = aucout$auc)
 ggplot(data, aes(x=x) ) +
   # Top
   geom_density(aes(x = var1, y = after_stat(density)), fill="#921D22" )+
   theme_classic()+
   labs(x="AUC",y="Density")
 
+write.table(data,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\H_RIGHT.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ##############  RF_8 云雨图 ###################
 feature_fre_auc8<-read.table("D:\\aging\\RESULT\\6radiomic\\feature_fre_auc8.txt" , sep = "\t", header = T,stringsAsFactors = F)
@@ -280,35 +260,25 @@ mean_feature1<-as.data.frame(t(mean_feature))
 colnames(mean_feature1)<-mean_feature1[1,]
 mean_feature1<-mean_feature1[-c(1:2),]
 mean_feature1<-cbind(rownames(mean_feature1),mean_feature1)
-
 osdata<-read.table("D:\\aging\\data\\GBM-NIHMS746836-supplement-78.txt" , sep = "\t", header = T,stringsAsFactors = F)
-
-
-
 agedata<-osdata[,c(1,15)]
 agedata<-merge(agedata,mean_feature1,by.x = "Case",by.y = "rownames(mean_feature1)")
-
-
 agedata$group="Young"
 agedata$group[agedata$Age>=40]="Middle"
 agedata$group[agedata$Age>=60]="Late"
 write.table(agedata,"D:\\aging\\RESULT\\6radiomic\\agedata.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
 library(ggplot2)
 library(gplots)
 library(ggpubr)
 library(ggsignif)
-
-
-
+library(ggdist)
 feature_list<-colnames(agedata)[3:10]
 df<-c()
 index<-c()
 p_lst <- list()
-
+df_ALL<-c()
+agedatai_all<-c()
 for (j in 3:10) {
-
-  
   agedata_Y<-agedata[agedata$group=="Young",j]
   agedata_M<-agedata[agedata$group=="Middle",j]
   agedata_L<-agedata[agedata$group=="Late",j]
@@ -319,7 +289,6 @@ for (j in 3:10) {
   colnames(df)<-c("group","mean","se")
   df$mean<-as.numeric(df$mean)
   df$se<-as.numeric(df$se)
-  
   agedatai<-agedata[,c(j,11)]
  p1<- ggplot()+
     geom_errorbar(data=df,aes(x = group, ymin = mean - se, ymax = mean + se),width = 0,position = position_nudge(x=-0.2),color="gray2")+
@@ -331,7 +300,6 @@ for (j in 3:10) {
     scale_fill_manual(values=c("#1f2a6b","#446799","#a3ced6"))+
     #geom_hline(aes(yintercept = 2.1),linetype="dashed",color="gray")+
     labs(x="", y=colnames(agedata)[j] )+
-    
     #scale_y_continuous(expand = c(0, 0), limit = c(1.3, 2.8))+
     #annotate("rect", xmin = 2.5, xmax =3.5,  ymin = 1.3, ymax = 2.8, alpha = 0.2,fill="gray58")+
     scale_x_discrete(limits=c("Young","Middle","Late"))+
@@ -341,10 +309,17 @@ for (j in 3:10) {
 
  #p_lst[[(j-2)]] <- p1
  ggsave(paste("D:\\aging\\RESULT\\6radiomic\\",colnames(agedata)[j] ,".pdf",sep=""), width = 4, height = 4 )
- 
-
-  
+ df1<-cbind(df,colnames(agedata)[j])
+ colnames(df1)<-c("group","mean","se","RFs" )
+ df_ALL<-rbind(df_ALL,df1)
+ agedatai1<- cbind(agedatai,colnames(agedata)[j])
+ colnames(agedatai1)<-c("values","group","RFs" )
+ agedatai_all<-rbind(agedatai_all,agedatai1)
 }
+
+write.table(df_ALL,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF10\\A_1.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(agedatai_all,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF10\\A_2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
 
 ############## RF_CF COR ###################
 rm(list = ls())
@@ -415,7 +390,6 @@ for (j in 1:3) {
    ri_r_mat1 <- melt(ri_r_mat, id.vars = "Features")
    ri_r_mat1<-cbind(colnames(surfarea_BAatlas)[i],ri_r_mat1)
    ri_r_mat2<-rbind(ri_r_mat2,ri_r_mat1)
-    
 }
 
 colnames(ri_r_mat2)<-c("region","RFeatures","CFeatures","value")
@@ -424,18 +398,13 @@ ri_r_mat4<-rbind(ri_r_mat4,ri_r_mat3)
 }
 colnames(ri_r_mat4)<-c("group","region","RFeatures","CFeatures","value")
 write.table(ri_r_mat4,"D:\\aging\\RESULT\\6radiomic\\RF_CF_cor.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
-
-
 # 使用aggregate函数和mean函数计算每个分组数据的均值
 Youngresult <- cbind( "Young",aggregate(value ~ region, ri_r_mat4[ri_r_mat4$group=="Young",], mean))
 Middleresult <- cbind( "Middle",aggregate(value ~ region, ri_r_mat4[ri_r_mat4$group=="Middle",], mean))
 Lateresult <- cbind( "Late",aggregate(value ~ region, ri_r_mat4[ri_r_mat4$group=="Late",], mean))
-
 write.table(Youngresult,"D:\\aging\\RESULT\\6radiomic\\Youngresult_cor.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 write.table(Middleresult,"D:\\aging\\RESULT\\6radiomic\\Middleresult_cor.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 write.table(Lateresult,"D:\\aging\\RESULT\\6radiomic\\Lateresult_cor.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
 
 
 ################# ggsegBrodmann ###################
@@ -451,18 +420,14 @@ Youngresult1<-ri_r_mat4[ri_r_mat4$group=="Young",]
 Middleresult1<-ri_r_mat4[ri_r_mat4$group=="Middle",]
 Lateresult1<-ri_r_mat4[ri_r_mat4$group=="Late",]
 rf_list<-unique(ri_r_mat4$RFeatures)
+RF_DATA_all<-c()
 for (i in 1:8) {
-  
-
 Young_RF <- cbind( rf_list[i],"Young",aggregate(value ~ region, Youngresult1[Youngresult1$RFeatures==rf_list[i],], mean))
 Middle_RF <- cbind( rf_list[i],"Middle",aggregate(value ~ region, Middleresult1[Middleresult1$RFeatures==rf_list[i],], mean))
 Late_RF <- cbind( rf_list[i],"Late",aggregate(value ~ region, Lateresult1[Lateresult1$RFeatures==rf_list[i],], mean))
-
 colnames(Young_RF)<-c("RF","group","region","value")
 colnames(Middle_RF)<-c("RF","group","region","value")
 colnames(Late_RF)<-c("RF","group","region","value")
-
-
 brodmann1<-as.data.frame(brodmann)
 label1<-sapply(brodmann1$label, function(x){gsub("BA","",x) } )
 brodmann1$label2<-sapply(label1, function(x){paste(x,"_area",sep = "") } )
@@ -481,13 +446,11 @@ rh_add<-cbind(rf_list[i],"Young",
 colnames(lh_add)<-colnames(Young_RF)
 colnames(rh_add)<-colnames(Young_RF)
 Young_RF_BA <- rbind(Young_RF,lh_add,rh_add)
-
 lh_add<-cbind(rf_list[i],"Middle",
               c("lh_1_3_area","lh_26_29_30_area","lh_41_42_52_area"),   
               rbind(mean(Middle_RF$value[Middle_RF$region=="lh_1_area" | Middle_RF$region=="lh_3_area"]),
                     mean(Middle_RF$value[Middle_RF$region=="lh_26_area" | Middle_RF$region=="lh_29_area" |Middle_RF$region=="lh_30_area"]),
                     mean(Middle_RF$value[Middle_RF$region=="lh_41_area" | Middle_RF$region=="lh_42_area"]))) 
-
 rh_add<-cbind(rf_list[i],"Middle",
               c("rh_1_3_area","rh_26_29_30_area","rh_41_42_52_area"),   
               rbind(mean(Middle_RF$value[Middle_RF$region=="rh_1_area" | Middle_RF$region=="rh_3_area"]),
@@ -496,13 +459,11 @@ rh_add<-cbind(rf_list[i],"Middle",
 colnames(lh_add)<-colnames(Middle_RF)
 colnames(rh_add)<-colnames(Middle_RF)
 Middle_RF_BA <- rbind(Middle_RF,lh_add,rh_add)
-
 lh_add<-cbind(rf_list[i],"Late",
               c("lh_1_3_area","lh_26_29_30_area","lh_41_42_52_area"),   
               rbind(mean(Late_RF$value[Late_RF$region=="lh_1_area" | Late_RF$region=="lh_3_area"]),
                     mean(Late_RF$value[Late_RF$region=="lh_26_area" | Late_RF$region=="lh_29_area" |Late_RF$region=="lh_30_area"]),
                     mean(Late_RF$value[Late_RF$region=="lh_41_area" | Late_RF$region=="lh_42_area"]))) 
-
 rh_add<-cbind(rf_list[i],"Late",
               c("rh_1_3_area","rh_26_29_30_area","rh_41_42_52_area"),   
               rbind(mean(Late_RF$value[Late_RF$region=="rh_1_area" | Late_RF$region=="rh_3_area"]),
@@ -515,21 +476,11 @@ Late_RF_BA <- rbind(Late_RF,lh_add,rh_add)
 Youngresult_BA1<-merge(Young_RF_BA,brodmann1,by.x = "region",by.y = "label2")
 Middleresult_BA1<-merge(Middle_RF_BA,brodmann1,by.x = "region",by.y = "label2")
 Lateresult_BA1<-merge(Late_RF_BA,brodmann1,by.x = "region",by.y = "label2")
-
 Youngresult_BA2<-Youngresult_BA1[,c(1:5,7,8,10,11)]
 Middleresult_BA2<-Middleresult_BA1[,c(1:5,7,8,10,11)]
 Lateresult_BA2<-Lateresult_BA1[,c(1:5,7,8,10,11)]
-
-
 RF_BA2<-rbind(Youngresult_BA2,Middleresult_BA2,Lateresult_BA2)
-
-
-
-write.table(RF_BA2,paste("D:\\aging\\RESULT\\9online tool\\3\\3-2\\",rf_list[i],"_BA.txt",sep="" ) ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
-
-
-
+#write.table(RF_BA2,paste("D:\\aging\\RESULT\\9online tool\\3\\3-2\\",rf_list[i],"_BA.txt",sep="" ) ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 cols<-colorRampPalette(c("#3A264D", "#537F7C", "#FFFF06"))(200)
 p1<-Youngresult_BA1 %>%
   ggplot() +
@@ -558,8 +509,12 @@ p3<-Lateresult_BA1 %>%
 p1+p2+p3
 
 #ggsave(paste("D:\\aging\\RESULT\\6radiomic\\",rf_list[i] ,".pdf",sep=""), width = 15, height = 15 )
-
+RF_DATA<-rbind(Youngresult_BA1,Middleresult_BA1,Lateresult_BA1)
+RF_DATA_all<-rbind(RF_DATA_all,RF_DATA )
 }
+RF_DATA_all<-RF_DATA_all[,-12]
+write.table(RF_DATA_all,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\7\\B_Bottom.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
 
 ########### GSVA ###############
 rm(list = ls())
@@ -605,13 +560,10 @@ gsva_mat_kegg <- gsva(expr=dat,
 for (k in 1:2) {
   if(k==1){
     gsva_mat<-gsva_mat_go
-    
   }else{
     gsva_mat<-gsva_mat_kegg
-    
   }
-  
-  
+
   Young<-agedata$Case[which(agedata$group=="Young")]
   Middle<-agedata$Case[which(agedata$group=="Middle")]
   Late<-agedata$Case[which(agedata$group=="Late")]
@@ -632,26 +584,19 @@ for (k in 1:2) {
       colnames(design)=levels(factor(group))
       rownames(design)=rownames(group)
       contrast.matrix<-makeContrasts(paste(c("Young","Middle"),collapse = "-"),levels = design)
-      
     }else if(m==2){
-      
       exp_cy <- cbind(Young_index, Late_index)
       group <- c(rep('Young', ncol(Young_index)), rep('Late', ncol(Late_index)))
       group <- factor(group, levels = c("Young", "Late"))
-      
       group <- as.matrix(group)
       design <- model.matrix(~0+group)
       colnames(design)=levels(factor(group))
       rownames(design)=rownames(group)
       contrast.matrix<-makeContrasts(paste(c("Young","Late"),collapse = "-"),levels = design)
-      
     }else if(m==3){
-      
       exp_cy <- cbind(Middle_index, Late_index)
-      
       group <- c(rep('Middle', ncol(Middle_index)), rep('Late', ncol(Late_index)))
       group <- factor(group, levels = c("Middle", "Late"))
-      
       group <- as.matrix(group)
       design <- model.matrix(~0+group)
       colnames(design)=levels(factor(group))
@@ -672,8 +617,6 @@ for (k in 1:2) {
     nrDEG = na.omit(tempOutput) 
     result1<-cbind(rownames(nrDEG),nrDEG[,c(1,4,5)])
     re_out<-merge(result1,re_out,by = "rownames(nrDEG)")
-    
-    
   }
   colnames(re_out)<-c("gene","YM_logFC","YM_P.Value","YM_adj.P.Val","YL_logFC","YL_P.Value","YL_adj.P.Val","ML_logFC","ML_P.Value","ML_adj.P.Val")
   adjpdata<-re_out[,c(3,6,9)]
@@ -682,16 +625,12 @@ for (k in 1:2) {
     result_GO<-result
     result_GO_show<-result[order(apply(result[,c(2,5,8)],1,sum),decreasing = T)[1:40] ,]
     result_GO_show_R9<-result[order(apply(result[,c(2,5,8)],1,sum),decreasing = T),]
-    
     gsva_mat_go_orderage<-cbind(Young_index,Middle_index,Late_index)
-
   }else{
     result_KEGG<-result
     result_KEGG_show<-result[order(apply(result[,c(2,5,8)],1,sum),decreasing = T)[1:10] ,]
     gsva_mat_kegg_orderage<-cbind(Young_index,Middle_index,Late_index)
-
   }
-  
 }
 
 result_show<-rbind(result_GO_show,result_KEGG_show)
@@ -701,14 +640,10 @@ colnames(gsva_mat_show)<-c("gene",colnames(gsva_mat_show)[-1])
 gsva_mat_show_out<-merge(gsva_mat_show,result_show,by="gene") [,1:42]
 rownames(gsva_mat_show_out)=gsva_mat_show_out[,1]
 gsva_mat_show_out<-gsva_mat_show_out[,-1]
-
-
 gsva_mat_show_out1<-matrix(as.numeric(as.matrix(gsva_mat_show_out) ),ncol = ncol(gsva_mat_show_out) )
 colnames(gsva_mat_show_out1)<-colnames(gsva_mat_show_out)
-
 rownames(gsva_mat_show_out1)<-tolower(rownames(gsva_mat_show_out))
 library(pheatmap)
-
 # 根据指定的样本顺序对数据进行重新排列
 paletteLength <- 2000
 myColor <- colorRampPalette(c("#154182", "#FFFFFF", "#99131D"))(paletteLength)
@@ -724,9 +659,6 @@ annotation_row<-data.frame( c(rep("GO",40),
                               rep("KEGG",10))) 
 colnames(annotation_row)<-"label"
 rownames(annotation_row)<-rownames(gsva_mat_show_out1)
-
-
-
 ann_colors=list(group=c(Young="#a3ced6",Middle="#446799",Late="#1f2a6b"),
                 label=c(GO="#6F5A90",KEGG="#EBBF2A"))
 
@@ -740,16 +672,12 @@ pheatmap(gsva_mat_show_out1,
          color = myColor,
          annotation_colors = ann_colors,
          #breaks=myBreaks, 
-         show_rownames = T, show_colnames = F,
+         show_rownames = F, show_colnames = F,
          annotation_legend = T, 
          gaps_col = c(7,23))
-
-
 result_all<-rbind(result_KEGG,result_GO)
 gsva_mat_all<-merge(gsva_mat_show,result_all,by="gene") [,1:42]
-
-
-
+write.table(gsva_mat_show_out1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 corout2<-c()
@@ -772,16 +700,12 @@ corout2_sig_kegg<-corout2_sig[grep("KEGG",corout2_sig$V2),  ]
 corout2_sig<-rbind(corout2_sig_bp,corout2_sig_kegg)
 corout2_sig$V2<-tolower(corout2_sig$V2)
 node<-rbind(cbind(unique(corout2_sig$V1),"RF"),cbind(unique(corout2_sig$V2),"GOBP"))
-
 write.table(corout2_sig,"D:\\aging\\RESULT\\6radiomic\\corout2_sig.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 write.table(node,"D:\\aging\\RESULT\\6radiomic\\node.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
-
 GOBP<-read.table("D:\\aging\\RESULT\\6radiomic\\GOBP.txt",header=T,sep = "\t", quote = "",stringsAsFactors = F,check.names=FALSE)
 GOBP$V1<-toupper(GOBP$V2)
 result_show_r9<-merge(GOBP,result_GO_show_R9,by.x="V1",by.y="gene")
 write.table(result_show_r9,"D:\\aging\\RESULT\\9online tool\\3\\3-2\\Table1_go_limma.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
 GOBP_corout2_sig<-merge(GOBP,corout2_sig,by="V2")
 write.table(GOBP_corout2_sig,"D:\\aging\\RESULT\\6radiomic\\corout2_sig.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
@@ -833,13 +757,124 @@ ggplot(data = corout2_sig,aes(x=V1,y=V2_2))+
  xlab("")+
   ylab("")
 
+write.table(corout2_sig,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\7\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 GOBP<-read.table("D:\\aging\\RESULT\\6radiomic\\GOBP.txt",header=T,sep = "\t", quote = "",stringsAsFactors = F,check.names=FALSE)
 GOBP$V2<-toupper(GOBP$V2) 
 GO_df<-read.table("D:\\aging\\RESULT\\6radiomic\\GO_df.txt",header=T,sep = "\t", quote = "",stringsAsFactors = F,check.names=FALSE)
 GO_df1<-unique(GO_df[,c(1,3)]) 
 GOBP1<-merge(GOBP,GO_df1,by.x="V2",by.y="gs_name")
-
 write.table(GOBP1,"D:\\aging\\RESULT\\6radiomic\\GO_lable_term_ID.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
+########### xcell #############
 
+library(xCell)
+GBM_gene<-read.table("D:\\aging\\GBM\\HT_HG-U133A.txt",header=T,sep = "\t", quote = "",stringsAsFactors = F,check.names=FALSE)
+case<-GBM_gene[,-grep("\\-11$",colnames(GBM_gene))]
+expmean_gene1<-case[,-1]
+rownames(expmean_gene1)<- case[,1]
+sigScores_group<-read.table("D:\\aging\\RESULT\\6radiomic\\sigScores_group.txt",header=T,sep = "\t", quote = "")
+
+scores <-  xCellAnalysis(expmean_gene1,rnaseq = T)
+xCell_scores<-as.data.frame(t(scores))
+xCell_scores1<-cbind(substr(rownames(xCell_scores), 1,12) ,xCell_scores)
+xCell_group<-merge(xCell_scores1,sigScores_group,by.x = "substr(rownames(xCell_scores), 1, 12)",by.y ="Case" )
+library(tidyverse)       
+library(ggsci)           
+library(ggExtra)         
+library(ggpmisc)        
+library(palmerpenguins) 
+library(ggpubr)
+for (i in 2:68) {
+  ggplot(xCell_group, aes(sigScores, xCell_group[,i])) +
+    geom_point() +  # 添加散点图层，点的大小表示体重
+    labs(x = "CAS", y = colnames(xCell_group)[i]) +  # 设置坐标轴标签
+    theme_classic()  +
+    stat_cor(geom = "text",label.x = 0)+
+    theme(axis.title = element_text(family = "sans", 
+                                    face = "bold"))
+  
+  
+  ggsave(paste("D:\\aging\\RESULT\\6radiomic\\xcell\\",colnames(xCell_group)[i],".pdf",sep="") )
+  
+}
+
+xCell_scores2 <- melt(xCell_scores1,id.vars = c("substr(rownames(xCell_scores), 1, 12)"))
+xCell_group<-merge(xCell_scores2,sigScores_group,by.x = "substr(rownames(xCell_scores), 1, 12)",by.y ="Case" )
+xCell_group$group[xCell_group$Age<12]="Childhood"
+xCell_group$group[xCell_group$Age>=12 & xCell_group$Age<20]="Adolescence"
+xCell_group$group[xCell_group$Age>=20 & xCell_group$Age<40]="Young"
+xCell_group$group[xCell_group$Age>=40 & xCell_group$Age<60]="Middle"
+xCell_group$group[xCell_group$Age>=60]="Late"
+write.table(xCell_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF9\\A-C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+library(ggplot2)
+library(tidyverse)
+library(gghalves) 
+celltype<-unique(xCell_group$variable)
+for (i in 1:67) {
+  xCell_group1<-xCell_group[which(as.character(xCell_group$variable) ==celltype[i]),]
+  
+  ggplot(xCell_group1,aes(x = group,y = value)) +
+    geom_violin(aes(fill = group),cex=0.8)+
+    geom_boxplot(aes(fill = group),outlier.colour="black",width=0.1,cex=0.8)+
+    geom_jitter(aes(color = group),width = 0.3,size=1.5)+
+    scale_fill_manual(values =  c("#1f2a6b","#446799","#a3ced6"))+
+    scale_color_manual(values =  c("#1f2a6b","#446799","#a3ced6"))+
+    #scale_x_discrete(limits=c("Young","Middle","Late"))+
+    theme_bw()+
+    labs(x = "", y = celltype[i] ) +
+    theme(panel.grid = element_blank())+
+    stat_compare_means(method = "kruskal.test",
+                       label = "p.format",
+                       label.x = 2,
+                       #label.y = 0.01,
+                       show.legend = F)
+  ggsave(paste("D:\\aging\\RESULT\\6radiomic\\xcell\\age_p\\",celltype[i],".pdf",sep=""), width = 20, height = 20, units = "cm" )
+}
+
+rm(list = ls())
+library(irr)
+################## os ###############
+library("survival")
+library("survminer")
+osdata<-read.table("D:\\aging\\data\\GBM-NIHMS746836-supplement-78.txt" , sep = "\t", header = T,stringsAsFactors = F)
+coordinate<-read.table("D:\\aging\\投稿\\1-NC\\修稿1\\lobe\\TCGA_120_en.txt" , sep = "\t", header = T,stringsAsFactors = F)
+group_feature<-merge(osdata,coordinate,by.x = "Case",by.y = "sample")
+
+
+extract_ggplotdata<-as.data.frame(table(group_feature$lobe_4C) ) 
+ggplot(extract_ggplotdata, aes(x =reorder(Var1,-Freq) , y=Freq, fill=Var1)) +
+  geom_bar(stat="identity", position="stack")+
+  # geom_bar(position=position_dodge(), stat="identity",width = 0.8, color = NA, size = 0.5)+
+  scale_fill_manual(values = c("#c5b5d1","#12803b","#5A7EB3","#cf1223"))+ 
+  #scale_y_continuous(expand = c(0,0)) +
+  #ylim(-6,15)+
+  theme_classic()+
+  labs(x="",y="# of samples")+　
+  theme(axis.text.x = element_text(angle = 45))
+
+
+
+group_feature<-merge(osdata,coordinate,by.x = "Case",by.y = "sample")
+group_feature<-group_feature[c(group_feature$lobe_4C=="frontal" | group_feature$lobe_4C=="occipital"), ]
+osdata_out<-as.data.frame(cbind(group_feature$Case,
+                                group_feature$lobe_3C,
+                                group_feature$Survival..months.,
+                                group_feature$Vital.status..1.dead.)) 
+colnames(osdata_out)<-c("Case","lobe","days","status")
+
+sfit <- survfit(Surv(as.numeric(days) , as.numeric(status))~lobe, data=osdata_out) 
+#ggsurvplot(sfit, conf.int=F, pval=TRUE)
+
+ggsurvplot(sfit,data = osdata_out,
+           pval = TRUE, #conf.int = TRUE,
+           #risk.table = TRUE, # Add risk table
+           risk.table.col = "strata", # Change risk table color by groups
+           linetype = "strata", # Change line type by groups
+           surv.median.line = "hv", # Specify median survival
+           # submain = coxdata$cerna[1], 
+           legend = "top", 
+           legend.title = "lobe",
+           palette = c("#c5b5d1", "#12803b","#cacbd0"))
+write.table(osdata_out,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\B.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)

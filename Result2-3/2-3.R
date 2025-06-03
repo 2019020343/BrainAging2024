@@ -49,7 +49,7 @@ ggplot(region_fre1, aes(x = Var1, y=as.numeric(Freq))) +
 
 
 
-
+write.table(region_fre1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\A.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 #write.table(region_fre1,"D:\\aging\\RESULT\\3CAS\\A_region_fre1.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 ################### Fig3 B ##############
 
@@ -67,13 +67,10 @@ for (i in 1:16) {
   region_DEG1<-as.data.frame(merge(region_fre_10,region_DEG,by.x = "Var1",by.y = "gene")[,c(3,6,9)]) 
   col_names<-c(col_names,strsplit(as.character(a[i]),"_")[[1]][1])
   region_DEG1_out<-cbind(region_DEG1_out,region_DEG1)
-  
-  
-  
+
 #  region_DEG2<-cbind(as.data.frame(merge(region_fre_10,region_DEG,by.x = "Var1",by.y = "gene")[,c(1,3,6,9)]) , strsplit(as.character(a[i]),"_")[[1]][1]) 
 #  region_DEG2_out<-rbind(region_DEG2_out, region_DEG2)
-  
-  
+
 }
 
 #write.table(region_DEG2_out,"D:\\aging\\RESULT\\9online tool\\2\\247gene_heatmap_table.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
@@ -83,18 +80,11 @@ for (i in 1:16) {
 
 hk_gene1<-region_DEG1_out[,-2]
 hk_gene1_sum<-apply(hk_gene1[,-1], 1, sum)
-
 quantile_value <- quantile(hk_gene1_sum, probs = 0.95)
-
 quantile_value1 <- quantile(hk_gene1_sum, probs = 0.05)
-
 hk_gene<-hk_gene1[c(which(hk_gene1_sum>=quantile_value),which(hk_gene1_sum<=quantile_value1)),]
-
-
-
 rownames(hk_gene)<-hk_gene[,1]
 hk_gene<-hk_gene[,-1]
-
 #hk_gene<-scale(hk_gene)
 # 根据指定的样本顺序对数据进行重新排列
 paletteLength <- 20
@@ -110,7 +100,6 @@ ann_color<-list(rengion=c("A1C"="#12803b","AMY"="#ec95b3","CBC"="#f18e25","DFC"=
                           "HIP"="#211d1e","IPC"="#57a8d7","ITC"="#ac536a","M1C"="#735d96",
                           "MD" ="#cacbd0","MFC"="#f1a7a4","OFC"="#cf1223","S1C"="#f4da9a",
                           "STC"="#f8bf89","STR"="#136cb6","V1C"="#c5b5d1","VFC"="#5A7EB3"))
-
 pheatmap(hk_gene,
          #scale = "row",
          annotation_col = annotation_col, 
@@ -129,18 +118,12 @@ pheatmap(hk_gene,
          angle_col = "45",
          border = F,
          annotation_legend = FALSE,gaps_col = c(3,6,9,12,15,18,21,24,27,30,33,36,39,42,45))
-
 colnames(hk_gene)<-c("A1C_1","A1C_2","A1C_3",  "AMY_1","AMY_2","AMY_3","CBC_1","CBC_2","CBC_3",  "DFC_1","DFC_2","DFC_3",
                      "HIP_1","HIP_2","HIP_3",  "IPC_1","IPC_2","IPC_3","ITC_1","ITC_2","ITC_3",  "M1C_1","M1C_2","M1C_3",
                      "MD_1","MD_2","MD_3",  "MFC_1","MFC_2","MFC_3","OFC_1","OFC_2","OFC_3",  "S1C_1","S1C_2","S1C_3",
                      "STC_1","STC_2","STC_3",  "STR_1","STR_2","STR_3",
                      "V1C_1","V1C_2","V1C_3",  "VFC_1","VFC_2","VFC_3")
-
-
-
-
-
-
+write.table(hk_gene,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\B.txt",col.names = T, row.names = T,sep = "\t" ,append = FALSE, quote = F)
 write.table(hk_gene,"D:\\aging\\RESULT\\2-3-CAS\\B_HEATMAP.txt",col.names = T, row.names = T,sep = "\t" ,append = FALSE, quote = F)
 #write.table(hk_gene1,"D:\\aging\\RESULT\\3CAS\\B_247genes.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
@@ -247,25 +230,12 @@ colnames(sankey)<-c("pathNames","metamolites")
 df <- sankey %>%
   make_long(metamolites, pathNames)
 
-
-
 #指定绘图顺序（转换为因子）：
 df$node <- factor(df$node,levels = c(sankey$pathNames %>% unique()%>% rev(),
                                      sankey$metamolites %>% unique() %>% rev()))
 #自定义配色：
 c4a_gui()
 mycol <- c(rep("#C07A7F",3),rep("#98AAC5",33) ,  colorRampPalette(c("#5D779B", "#FAF3BE", "#C9301D"))(nrow(BP))  )
-
-#绘图：
-ggplot(df,aes(y = car, axis1 = inccat, axis2 =ed,axis3 = marital)) +
-  geom_alluvium(aes(fill = gender)) +
-  geom_stratum(width = 1/6, fill = "black", color = "grey") +
-  geom_label(stat = "stratum", aes(label = after_stat(stratum))) +
-  scale_x_discrete(limits = c("Gender", "Dept"), expand = c(.05, .05)) +
-  scale_fill_brewer(type = "qual", palette = "Set3") +
-  ggtitle("收入和购买汽车关系")
-
-
 p4 <- ggplot(df, aes(x = x,
                      next_x = next_x,
                      node = node,
@@ -283,11 +253,8 @@ p4 <- ggplot(df, aes(x = x,
   theme_void() +
   theme(legend.position = 'none')
 p4
-
 #write.table(df,"D:\\aging\\RESULT\\3CAS\\C_sankey.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
 p5 <- p4 + theme(plot.margin = unit(c(0,5,0,0),units="cm"))
-p6 <-ggdraw() + draw_plot(p5) + draw_plot(p3, scale = 0.5, x = 0.62, y=-0.21, width=0.48, height=1.37)
 
 
 
@@ -393,42 +360,14 @@ P3<-ggplot(sigScores_group,aes(x=group1,y=as.numeric(sigScores) ,fill=group1))+
                size = 0.5)
 
 P3
+#write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+
 sigScores_group<-read.table("D:\\aging\\RESULT\\2-3-CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
+sigScores_group2<-sigScores_group[sigScores_group$group1==20 | sigScores_group$group1==30 |sigScores_group$group1==40,]
+sigScores_group2$group1 <- factor(sigScores_group2$group1,levels = c('20','30','40'))
 
-sigScores_group2<-sigScores_group[sigScores_group$Sex=="Sex: F",]
-write.table(sigScores_group2,"D:\\aging\\RESULT\\2-3-CAS\\sigScores_group_F.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
-sigScores_group3<-sigScores_group[sigScores_group$Sex=="Sex: M",]
-write.table(sigScores_group3,"D:\\aging\\RESULT\\2-3-CAS\\sigScores_group_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
-
-
-P3<-ggplot(sigScores_group3,aes(x=group1,y=as.numeric(sigScores) ,fill=Sex))+ 
-  stat_boxplot(geom = "errorbar")+
-  geom_boxplot(color="azure4",outlier.colour="red",
-               outlier.fill="red",outlier.size=1,outlier.alpha=0#notch=TRUE,notchwidth = 0.8
-  )+  
-  
-  facet_wrap(~region)+
-  #stat_compare_means( method="anova")+
-  #scale_fill_material_d()+
-  theme_classic()+  
-  #ylim(c(0.5,1))+
-  scale_fill_manual(values = c("#77977A"))+ 
-  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank())+  labs(x="Group", y="CAS")+ 
-  theme(axis.title.x =element_text(size=12,face = "bold"), axis.title.y=element_text(size=12,face = "bold"),axis.text = element_text(size = 12,face = "bold"))+
-  #stat_summary(fun.y = "mean", geom = "point", size = 0.5) +
-  stat_summary(fun.y = "mean", geom = "line", 
-               aes(group = 1), 
-               size = 0.5)
-
-P3
-
-
-
-write.table(sigScores_group2,"D:\\aging\\RESULT\\2-3-CAS\\sigScores_group2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
-
+write.table(sigScores_group2,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 P3<-ggplot(sigScores_group2,aes(x=group1,y=as.numeric(sigScores) ,fill=Sex))+ 
   stat_boxplot(geom = "errorbar")+
@@ -455,19 +394,21 @@ P3
 ###############xcell ###############
 library(xCell)
 expmean_gene<-read.table("D:\\aging\\data\\geo\\expmean_gene.txt",header=T,row.names = 1, sep = "\t", quote = "")
-sigScores_group<-read.table("D:\\aging\\RESULT\\3CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
+sigScores_group<-read.table("D:\\aging\\RESULT\\2-3-CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
 expmean_gene1<-expmean_gene[,sapply(sigScores_group$V1,function(x){which(colnames(expmean_gene)==x)})]
 scores <-  xCellAnalysis(expmean_gene1,rnaseq = T)
 xCell_scores<-as.data.frame(t(scores))
 xCell_scores1<-cbind(rownames(xCell_scores),xCell_scores)
 xCell_group<-merge(xCell_scores1,sigScores_group,by.x = "rownames(xCell_scores)",by.y ="V1" )
-install.packages("ggExtra")
+#install.packages("ggExtra")
 library(tidyverse)       
 library(ggsci)           
 library(ggExtra)         
 library(ggpmisc)        
 library(palmerpenguins) 
 library(ggpubr)
+write.table(xCell_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
 p <- ggplot(xCell_group, aes(sigScores, xCell_group[,11],color=region)) +
   geom_point() +  # 添加散点图层，点的大小表示体重
   scale_colour_manual(values=c("#12803b","#ec95b3","#f18e25","#f5c51e",
@@ -532,6 +473,89 @@ for (j in 1:16) {
 }
 
 
+############### CIBERSORT  ###############
+#devtools::install_github("Moonerss/CIBERSORT")
+library(CIBERSORT)
+expmean_gene<-read.table("D:\\aging\\data\\geo\\expmean_gene.txt",header=T,row.names = 1, sep = "\t", quote = "")
+sigScores_group<-read.table("D:\\aging\\RESULT\\2-3-CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
+expmean_gene1<-expmean_gene[,sapply(sigScores_group$V1,function(x){which(colnames(expmean_gene)==x)})]
+CIBERSORT_scores1<-read.table("D:\\aging\\投稿\\1-NC\\修稿1\\CIBERSORT\\output\\CIBERSORT.ABS.txt",header=T,sep = "\t", quote = "")
+CIBERSORT_scores1<-read.table("D:\\aging\\投稿\\1-NC\\修稿1\\CIBERSORT\\output\\CIBERSORT.REL.txt",header=T,sep = "\t", quote = "")
+
+
+CIBERSORT_group<-merge(CIBERSORT_scores1,sigScores_group,by.x = "Input.Sample",by.y ="V1" )
+write.table(CIBERSORT_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF3\\B.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(CIBERSORT_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF3\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+#install.packages("ggExtra")
+library(tidyverse)       
+library(ggsci)           
+library(ggExtra)         
+library(ggpmisc)        
+library(palmerpenguins) 
+library(ggpubr)
+p <- ggplot(CIBERSORT_group, aes(sigScores, CIBERSORT_group[,7],color=region)) +
+  geom_point() +  # 添加散点图层，点的大小表示体重
+  scale_colour_manual(values=c("#12803b","#ec95b3","#f18e25","#f5c51e",
+                               "#211d1e","#57a8d7","#ac536a","#735d96",
+                               "#cacbd0","#f1a7a4","#cf1223","#f4da9a",
+                               "#f8bf89","#136cb6","#c5b5d1","#5A7EB3")) +
+  labs(x = "CAS", y = colnames(CIBERSORT_group)[7]) +  # 设置坐标轴标签
+  theme_classic()  +
+  
+  stat_cor(aes(color = region), label.x = 0)
+p
+
+p1 <- ggplot(CIBERSORT_group, aes(sigScores, CIBERSORT_group[,5],color=region)) +
+  geom_point() +  # 添加散点图层，点的大小表示体重
+  scale_colour_manual(values=c("#12803b","#ec95b3","#f18e25","#f5c51e",
+                               "#211d1e","#57a8d7","#ac536a","#735d96",
+                               "#cacbd0","#f1a7a4","#cf1223","#f4da9a",
+                               "#f8bf89","#136cb6","#c5b5d1","#5A7EB3")) +
+  labs(x = "CAS", y = colnames(CIBERSORT_group)[5]) +  # 设置坐标轴标签
+  theme_classic()  +
+  
+  stat_cor(aes(color = region), label.x = 0)
+p1
+
+for (i in 2:68) {
+  ggplot(CIBERSORT_group, aes(sigScores, CIBERSORT_group[,i],color=region)) +
+    geom_point() +  # 添加散点图层，点的大小表示体重
+    scale_colour_manual(values=c("#12803b","#ec95b3","#f18e25","#f5c51e",
+                                 "#211d1e","#57a8d7","#ac536a","#735d96",
+                                 "#cacbd0","#f1a7a4","#cf1223","#f4da9a",
+                                 "#f8bf89","#136cb6","#c5b5d1","#5A7EB3")) +
+    labs(x = "CAS", y = colnames(CIBERSORT_group)[i]) +  # 设置坐标轴标签
+    theme_classic()  +
+    stat_cor(aes(color = region), geom = "text",label.x = 0)+
+    theme(axis.title = element_text(family = "sans", 
+                                    face = "bold"))
+  
+  
+  ggsave(paste("D:\\aging\\RESULT\\3CAS\\xcell\\",colnames(CIBERSORT_group)[i],".pdf",sep="") )
+  
+}
+
+
+region_list<-unique(CIBERSORT_group$region)
+values=c("#12803b","#ec95b3","#f18e25","#f5c51e",
+         "#211d1e","#57a8d7","#ac536a","#735d96",
+         "#cacbd0","#f1a7a4","#cf1223","#f4da9a",
+         "#f8bf89","#136cb6","#c5b5d1","#5A7EB3")
+for (j in 1:16) {
+  
+  cd4_tem_V1C<-CIBERSORT_group[CIBERSORT_group$region==region_list[j],]
+  ggplot(cd4_tem_V1C, aes(sigScores, cd4_tem_V1C[,11],color=region)) +
+    geom_point() +  # 添加散点图层，点的大小表示体重
+    scale_colour_manual(values=c("#997DAD")) +
+    labs(x = "CAS", y = "cd4_tem") +  # 设置坐标轴标签
+    theme_classic()  +
+    stat_cor(aes(color = region))+ 
+    geom_smooth(method="lm", se=FALSE)
+  
+  ggsave(paste("D:\\aging\\RESULT\\3CAS\\xcell\\cd4_tem_",region_list[j],".pdf",sep="") )
+  
+}
 
 
 
@@ -586,7 +610,7 @@ ggplot(sigScores_group, aes(x=age, y=as.numeric(sigScores) ,color = region)) +
 
 
 sigScores_group2<-sigScores_group[sigScores_group$Sex=="Sex: F", ]
-
+write.table(sigScores_group2,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\F_Female.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ggplot(sigScores_group2, aes(x=age, y=sigScores,color = region)) + 
   theme_classic()+
@@ -618,6 +642,7 @@ ggplot(sigScores_group2, aes(x=age, y=sigScores,color = region)) +
 ############# Sex fit  ######################
 
 sigScores_group3<-sigScores_group[sigScores_group$Sex=="Sex: M", ]
+write.table(sigScores_group3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\F_Male.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 ggplot(sigScores_group3, aes(x=age, y=sigScores,color = region)) + 
@@ -679,7 +704,7 @@ write.table(extract_ggplotdata,"D:\\aging\\RESULT\\3CAS\\slope_loess.txt",col.na
 
 
 cols<-colorRampPalette(c("#5D779B", "#FAF3BE", "#C9301D"))(200)
-extract_ggplotdata<-read.table("D:\\aging\\RESULT\\3CAS\\slope.txt",header=T,sep = "\t", quote = "")
+extract_ggplotdata<-read.table("D:\\aging\\RESULT\\2-3-CAS\\slope.txt",header=T,sep = "\t", quote = "")
 ggplot(extract_ggplotdata, aes(x =reorder(region,-slope) , y=slope*1000, fill=slope)) +
   scale_fill_gradientn(limits=c(0, 0.01), colours = cols)+
   #scale_y_continuous(expand = c(0,0)) +
@@ -724,6 +749,7 @@ colnames(extract_ggplotdata2)<-c("region","slope","sex")
   
   
 extract_ggplotdata_sex<-rbind(extract_ggplotdata1,extract_ggplotdata2)
+write.table(extract_ggplotdata_sex,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\G.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ggplot(extract_ggplotdata_sex, aes(x =reorder(region,-slope) , y=slope*1000, fill=sex)) +
   geom_bar(position=position_dodge(), stat="identity")+
@@ -742,7 +768,7 @@ ggplot(extract_ggplotdata_sex, aes(x =reorder(region,-slope) , y=slope*1000, fil
   install.packages("segmented")
  library(segmented)
   library(ggplot2)
-  sigScores_group<-read.table("D:\\aging\\RESULT\\3CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
+  sigScores_group<-read.table("D:\\aging\\RESULT\\2-3-CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
   region_list<-unique( sigScores_group$region) 
   slope_list<-c()
   slope_list_F<-c()
@@ -836,7 +862,7 @@ ggplot(extract_ggplotdata_sex, aes(x =reorder(region,-slope) , y=slope*1000, fil
   #> Loading required package: ggplot2
   library(ggseg3d)
   library(ggsegBrodmann)
-  slope_BA<-read.table("D:\\aging\\RESULT\\3CAS\\slope_BA.txt",header=T,sep = "\t", quote = "",fill = T)
+  slope_BA<-read.table("D:\\aging\\RESULT\\2-3-CAS\\slope_BA.txt",header=T,sep = "\t", quote = "",fill = T)
   
   brodmann1<-as.data.frame(brodmann)
   slope_BA1<-merge(slope_BA,brodmann1,by.x = "BA",by.y = "region")
@@ -849,7 +875,7 @@ ggplot(extract_ggplotdata_sex, aes(x =reorder(region,-slope) , y=slope*1000, fil
     theme_classic()+
     scale_fill_gradientn(limits=c(0, 0.01), colours = cols)
 ########### sex ############
-  slope_BA_F<-read.table("D:\\aging\\RESULT\\3CAS\\slope_F_BA.txt",header=T,sep = "\t", quote = "",fill = T)
+  slope_BA_F<-read.table("D:\\aging\\RESULT\\2-3-CAS\\slope_F_BA.txt",header=T,sep = "\t", quote = "",fill = T)
   
   brodmann1<-as.data.frame(brodmann)
   slope_BA1_F<-merge(slope_BA_F,brodmann1,by.x = "BA",by.y = "region")

@@ -43,6 +43,7 @@ expmean_gene_1<-as.data.frame(expmean_gene_1)
 colnames(expmean_gene_1)<-colnames(genes_EXP)[-1]
 
 write.table(expmean_gene_1,"D:\\aging\\RESULT\\4val\\25region_rnaseq\\expmean_gene.txt",col.names = T, row.names = T,sep = "\t" ,append = FALSE, quote = F)
+expmean_gene_1<-read.table("D:\\aging\\RESULT\\4val\\25region_rnaseq\\expmean_gene.txt",header=T,sep = "\t", quote = "")
 
 expmean_gene_2<-expmean_gene_1[,-1]
 rownames(expmean_gene_2)<-expmean_gene_1[,1]
@@ -67,6 +68,11 @@ pbmc <- FindNeighbors(pbmc, dims = 1:i)
 pbmc <- FindClusters(pbmc, resolution = 0.8)
 # clustree(pbmc@meta.data,prefix = "RNA_snn_res.")
 pbmc1 <- RunUMAP(pbmc, dims = 1:i, verbose = T)
+umap2<- pbmc1@reductions[["umap"]]@cell.embeddings
+rownames(sample_group)<-sample_group$Sample_title
+umap3<-merge(umap2,sample_group,by="row.names")
+write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
 
 #dims = 1:10 即选取前10个主成分来分类细胞。
 #查看前5个细胞的分类ID
@@ -137,34 +143,25 @@ CAS_genes_sum<-apply(CAS_genes[,-1], 1, sum)
 up<-cbind(CAS_genes[CAS_genes_sum>0,1],-1 ) 
 down<-cbind(CAS_genes[CAS_genes_sum<0,1],1 ) 
 sigData1<-t(rbind(up,down ))
-
 sigData2<-as.numeric(sigData1[2,])
 names(sigData2)<-sigData1[1,]
 sig <- createGeneSignature(name = "Common Aging Score", sigData = sigData2)
 mySignatures <- c(sig)
 vis <- Vision(data = CAS_genes_EXP, signatures = mySignatures)
-
 options(mc.cores = 1)
-
 vis <- analyze(vis)
-
-
 tsne <- getProjections(vis)[["tSNE30"]]
 sigScores <- getSignatureScores(vis)[, "Common Aging Score"]
 sigScores1<-cbind(names(sigScores),sigScores)
 colnames(sigScores1)<-c("Sample_title","sigScores")
 sigScores_group<-merge(sigScores1,sample_group,by= "Sample_title" )
-
-
 write.table(sigScores_group,"D:\\aging\\RESULT\\4val\\sigScores_group.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
 
 P3<-ggplot(sigScores_group,aes(x=as.character(Sample_age) ,y=as.numeric(sigScores) ,fill=as.character(Sample_age)))+ 
   stat_boxplot(geom = "errorbar")+
   geom_boxplot(color="azure4",outlier.colour="red",
                outlier.fill="red",outlier.size=1,outlier.alpha=0#notch=TRUE,notchwidth = 0.8
-  )+  
-  
+               )+  
   facet_wrap(~TEST_region)+
   stat_compare_means(method = "anova" )+
   #scale_fill_material_d()+
@@ -178,9 +175,11 @@ P3<-ggplot(sigScores_group,aes(x=as.character(Sample_age) ,y=as.numeric(sigScore
                aes(group = 1), 
                size = 0.5)
 
+write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF5\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ################ regression  -test #########################
-sigScores_group1<-read.table("D:\\aging\\RESULT\\3CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
+
+sigScores_group1<-read.table("D:\\aging\\RESULT\\2-3-CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
 sigScores_group_test<-sigScores_group1[sigScores_group1$age<40, ]
 
 # 逻辑回归
@@ -190,15 +189,13 @@ su1 = summary(lm1)
 
 ggplot(sigScores_group_test, aes(x=age, y=sigScores,color = region)) + 
   theme_classic()+
-  
   ggtitle('linear fit')+
-  
   geom_smooth(method = "lm", formula = y ~ x,size = 2,se = F)+ ##二项式拟合
-  
   scale_colour_manual(values=c("#12803b","#ec95b3","#f18e25","#f5c51e",
                                "#211d1e","#57a8d7","#ac536a","#735d96",
                                "#cacbd0","#f1a7a4","#cf1223","#f4da9a",
                                "#f8bf89","#136cb6","#c5b5d1","#5A7EB3"))
+write.table(sigScores_group_test,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF5\\A.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 species_lst <- unique(sigScores_group_test$region)
 p_lst <- list()
@@ -229,6 +226,7 @@ extract_ggplotdata_less40_test<-read.table("D:\\aging\\RESULT\\4val\\less40_slop
 
 
 ################ regression  -val #########################
+sigScores_group<-read.table("D:\\aging\\RESULT\\4val\\25region_rnaseq\\sigScores_group.txt",header=T,sep = "\t", quote = "")
 lm1 <- lm(Sample_age~sigScores, data = sigScores_group)
 su1 = summary(lm1)
 f1 <- y ~ x #定义回归方程
@@ -240,10 +238,10 @@ ggplot(sigScores_group, aes(x=Sample_age, y=as.numeric( sigScores),color = TEST_
                                "#211d1e","#57a8d7","#ac536a","#735d96",
                                "#cacbd0","#f1a7a4","#cf1223","#f4da9a",
                              "#f8bf89","#136cb6","#c5b5d1","#5A7EB3"))
+write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF5\\A_V.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 library(ggpubr)
 library(ggpmisc)
-
 species_lst <- unique(sigScores_group$TEST_region)
 p_lst <- list()
 data_lst <- list()
@@ -265,13 +263,9 @@ for (i in species_lst) {
   data_lst[[i]] <- c(i,gsub('[italic()~`* ]','',raw_furmula),
                      ggplot_build(p)$data[[3]]$p.value,ggplot_build(p)$data[[3]]$estimate)
 }
-
 extract_ggplotdata <- as.data.frame(t(as.data.frame(data_lst)))
-
 #write.table(extract_ggplotdata,"D:\\aging\\RESULT\\4val\\slope.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 cols<-colorRampPalette(c("#5D779B", "#FAF3BE", "#C9301D"))(200)
-
-
 extract_ggplotdata_test<-cbind(read.table("D:\\aging\\RESULT\\4val\\25region_rnaseq\\slope.txt",header=T,sep = "\t", quote = ""),"test")
 extract_ggplotdata_val<-cbind(read.table("D:\\aging\\RESULT\\4val\\25region_rnaseq\\less40_slope.txt",header=T,sep = "\t", quote = ""),"val")
 colnames(extract_ggplotdata_test)<-c("region","V2","p.value","estimate","slope","dataset")
@@ -286,52 +280,15 @@ ggplot(extract_ggplotdata, aes(x =reorder(region,-slope) , y=slope*1000, fill=da
   ylim(-6,15)+
   labs(x="",y="CAS slope (x 10 -3)")+　
   theme(axis.text.x = element_text(angle = 45))
-
-
+write.table(extract_ggplotdata,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\B.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 t.test(extract_ggplotdata$slope[extract_ggplotdata$dataset=="test"],extract_ggplotdata$slope[extract_ggplotdata$dataset=="val"],alternative = "two.sided")
 
-
-
-
-
-#ggplot(extract_ggplotdata, aes(x =reorder(region,-slope) , y=slope*1000, fill=dataset)) +
-#  scale_fill_gradientn(limits=c(0, 0.01), colours = cols)+
-  #scale_y_continuous(expand = c(0,0)) +
-#  theme_classic()+
-#  ylim(-5,10)+
-#  labs(x="",y="CAS slope (x 10 -3)")+
-#  theme(axis.text.x = element_text(angle = 45))+#字体大小
-#  geom_col(width = 0.6, color = NA, size = 0.5)
-  #
-
-#ggplot(extract_ggplotdata_less40_test, aes(x =reorder(region,-slope) , y=slope*1000, fill=slope)) +
-#  scale_fill_gradientn(limits=c(0, 0.01), colours = cols)+
-  #scale_y_continuous(expand = c(0,0)) +
-#  theme_classic()+
-#  ylim(-5,10)+
-#  labs(x="",y="CAS slope (x 10 -3)")+
-#  theme(axis.text.x = element_text(angle = 45))+#字体大小
-#  geom_col(width = 0.6, color = NA, size = 0.5)
 ##############################  neuron VS NON-neuron #################
 
 sigScores_group<-read.table("D:\\aging\\RESULT\\4val\\sigScores_group.txt",header=T,sep = "\t", quote = "")
 sigScores_group_neuron<-sigScores_group[sigScores_group$Sample_neuron=="group: non-neuron",]
-lm1 <- lm(Sample_age~sigScores, data = sigScores_group_neuron)
-su1 = summary(lm1)
-f1 <- y ~ x #定义回归方程
-ggplot(sigScores_group_neuron, aes(x=Sample_age, y=as.numeric( sigScores),color = TEST_region)) + 
-  theme_classic()+
-  ggtitle('linear fit')+
-  geom_smooth(method = "lm", formula = y ~ x,size = 2,se = F)+ ##二项式拟合
-  theme(legend.position = 'bottom')+
-  scale_colour_manual(values=c("#12803b","#ec95b3","#f18e25","#f5c51e",
-                               "#211d1e","#57a8d7","#ac536a","#735d96",
-                               "#cacbd0","#f1a7a4","#cf1223","#f4da9a",
-                               "#f8bf89","#136cb6","#c5b5d1","#5A7EB3"))
-
 library(ggpubr)
 library(ggpmisc)
-
 species_lst <- unique(sigScores_group_neuron$TEST_region)
 p_lst <- list()
 data_lst <- list()
@@ -354,11 +311,7 @@ for (i in species_lst) {
 }
 
 extract_ggplotdata <- as.data.frame(t(as.data.frame(data_lst)))
-
-write.table(extract_ggplotdata,"D:\\aging\\RESULT\\4val\\slope_non-neuron.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
-
-
+#write.table(extract_ggplotdata,"D:\\aging\\RESULT\\4val\\slope_non-neuron.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 extract_ggplotdata_neuron<-cbind(read.table("D:\\aging\\RESULT\\4val\\25region_rnaseq\\slope_neuron.txt",header=T,sep = "\t", quote = ""),"neuron")
 extract_ggplotdata_non_neuron<-cbind(read.table("D:\\aging\\RESULT\\4val\\25region_rnaseq\\slope_non-neuron.txt",header=T,sep = "\t", quote = ""),"non_neuron")
 colnames(extract_ggplotdata_neuron)<-c("region","V2","p.value","estimate","slope","cell")
@@ -373,36 +326,8 @@ ggplot(extract_ggplotdata, aes(x =reorder(region,-slope) , y=slope*1000, fill=ce
   theme_classic()+
   labs(x="",y="CAS slope (x 10 -3)")+　
   theme(axis.text.x = element_text(angle = 45))
-
-
+write.table(extract_ggplotdata,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 t.test(extract_ggplotdata$slope[extract_ggplotdata$cell=="neuron"],extract_ggplotdata$slope[extract_ggplotdata$cell=="non_neuron"],alternative = "two.sided")
-
-
-#cols<-colorRampPalette(c("#5D779B", "#FAF3BE", "#C9301D"))(200)
-
-
-#ggplot(extract_ggplotdata, aes(x =reorder(region,-slope) , y=slope*1000, fill=slope)) +
-#  scale_fill_gradientn(limits=c(0, 0.01), colours = cols)+
-#  #scale_y_continuous(expand = c(0,0)) +
-#  theme_classic()+
-#  ylim(-5,10)+
-#  labs(x="",y="CAS slope (x 10 -3)")+
-#  theme(axis.text.x = element_text(angle = 45))+#字体大小
-  #  geom_col(width = 0.6, color = NA, size = 0.5)
-
-
-#extract_ggplotdata<-cbind(read.table("D:\\aging\\RESULT\\4val\\slope_non-neuron.txt",header=T,sep = "\t", quote = ""),"test")
-
-#ggplot(extract_ggplotdata, aes(x =reorder(region,-slope) , y=slope*1000, fill=slope)) +
-#  scale_fill_gradientn(limits=c(0, 0.01), colours = cols)+
-#  #scale_y_continuous(expand = c(0,0)) +
-#  theme_classic()+
-#  ylim(-5,10)+
-#  labs(x="",y="CAS slope (x 10 -3)")+
-#  theme(axis.text.x = element_text(angle = 45))+#字体大小
-#  geom_col(width = 0.6, color = NA, size = 0.5)
-
-
 
 ##############################  Sex #################
 
@@ -423,7 +348,6 @@ ggplot(sigScores_group_Female, aes(x=Sample_age, y=as.numeric( sigScores),color 
 
 library(ggpubr)
 library(ggpmisc)
-
 species_lst <- unique(sigScores_group_Female$TEST_region)[-12]
 p_lst <- list()
 data_lst <- list()
@@ -446,7 +370,6 @@ for (i in species_lst) {
 }
 
 extract_ggplotdata <- as.data.frame(t(as.data.frame(data_lst)))
-
 write.table(extract_ggplotdata,"D:\\aging\\RESULT\\4val\\25region_rnaseq\\slope_Male.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 cols<-colorRampPalette(c("#5D779B", "#FAF3BE", "#C9301D"))(200)
 
@@ -465,7 +388,6 @@ ggplot(extract_ggplotdata, aes(x =reorder(region,-slope) , y=slope*1000, fill=se
   ylim(-6,15)+
   labs(x="",y="CAS slope (x 10 -3)")+　
   theme(axis.text.x = element_text(angle = 45))
-
 t.test(extract_ggplotdata$slope[extract_ggplotdata$sex=="Female"],extract_ggplotdata$slope[extract_ggplotdata$sex=="Male"])
 
 
@@ -473,12 +395,7 @@ t.test(extract_ggplotdata$slope[extract_ggplotdata$sex=="Female"],extract_ggplot
 CAS_genes_EXP1<-t(CAS_genes_EXP)
 CAS_genes_EXP1<-cbind(rownames(CAS_genes_EXP1),CAS_genes_EXP1)
 CAS_sample_group<-merge(CAS_genes_EXP1,sample_group,by.x="V1",by.y="Sample_title")
-
-#当然了，如果你乐意，还可以加上散点，让样本量更加清晰，这也是很多杂志的要求
-
 for (i in 2:221) {
-  
-  
   ggplot(CAS_sample_group, aes(fill=as.character(Sample_age) , y=as.numeric(CAS_sample_group[,i]), x=reorder(as.character(Sample_age),-as.numeric(CAS_sample_group[,i]) )))+
     geom_bar(position=position_dodge(),
              stat="summary",
@@ -521,12 +438,9 @@ library(xCell)
 expmean_gene<-read.table("D:\\aging\\RESULT\\4val\\25region_rnaseq\\expmean_gene.txt",header=T,row.names = 2, sep = "\t", quote = "")
 expmean_gene<-expmean_gene[,-1]
 sigScores_group<-read.table("D:\\aging\\RESULT\\4val\\25region_rnaseq\\sigScores_group.txt",header=T,sep = "\t", quote = "")
-
 scores <-  xCellAnalysis(expmean_gene,rnaseq = T)
 xCell_scores<-as.data.frame(t(scores))
 xCell_scores1<-cbind(rownames(xCell_scores),xCell_scores)
-
-
 xCell_group<-merge(xCell_scores1,sigScores_group,by.x = "rownames(xCell_scores)",by.y ="Sample_title" )
 library(tidyverse)       
 library(ggsci)           
@@ -541,14 +455,10 @@ for (i in 2:68) {
   P<-re$p.value
   out<-cbind(colnames(xCell_group)[i],R,P)
   outdata<-rbind(outdata,out)
-
 }
 outdata<-as.data.frame(outdata)
 outdata_sig<-outdata[as.numeric(outdata$P) <0.01 & abs(as.numeric(outdata$R))>0.6, ]
 outdata_sig<-outdata_sig[outdata_sig$V1!="MicroenvironmentScore" &  outdata_sig$V1!="StromaScore",]
-
-
-
 ggplot(outdata_sig, aes(x =reorder(V1,-as.numeric(R)) , y=as.numeric(R), fill=V1)) +
   scale_fill_manual( values = c("#AFBED2","#D93B45","#CB6D5D","#F8B9AB","#85AD9B",
                                 "#747D90","#8DBCCA","#577465","#ED6767","#827964",
@@ -560,6 +470,7 @@ ggplot(outdata_sig, aes(x =reorder(V1,-as.numeric(R)) , y=as.numeric(R), fill=V1
   labs(x="",y="cor")+
   theme(axis.text.x = element_text(angle = 45))+#字体大小
   geom_col(width = 0.6, color = NA, size = 0.5)
+write.table(outdata_sig,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 

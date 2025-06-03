@@ -16,11 +16,11 @@ sample_group$group[sample_group$age>=40 & sample_group$age<60]="Middle"
 sample_group$group[sample_group$age>60]="Late"
 
 sample_group$region1<-"NCX"
-sample_group$region1[sample_group$region=="region: AMY"]="AMY"
-sample_group$region1[sample_group$region=="region: MD"]="MD"
-sample_group$region1[sample_group$region=="region: HIP"]="HIP"
-sample_group$region1[sample_group$region=="region: STR"]="STR"
-sample_group$region1[sample_group$region=="region: CBC"]="CBC"
+sample_group$region1[sample_group$region=="AMY"]="AMY"
+sample_group$region1[sample_group$region=="MD"]="MD"
+sample_group$region1[sample_group$region=="HIP"]="HIP"
+sample_group$region1[sample_group$region=="STR"]="STR"
+sample_group$region1[sample_group$region=="CBC"]="CBC"
 
 sample_group$region2[grepl("L$", sample_group$Sample_description) ]<-"Left"
 sample_group$region2[grepl("R$", sample_group$Sample_description) ]<-"Right"
@@ -42,8 +42,6 @@ head(scRNA@meta.data, 5)
 #nCount_RNA与nFeature_RNA的相关性
 pbmc <- NormalizeData(scRNA, normalization.method = "LogNormalize", scale.factor = 10000)
 pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
-
-
 all.genes <- rownames(pbmc)
 pbmc <- ScaleData(pbmc, features = all.genes)
 pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
@@ -54,6 +52,10 @@ pbmc <- FindNeighbors(pbmc, dims = 1:i)
 pbmc <- FindClusters(pbmc, resolution = 0.8)
 # clustree(pbmc@meta.data,prefix = "RNA_snn_res.")
 pbmc1 <- RunUMAP(pbmc, dims = 1:i, verbose = T)
+umap2<- pbmc1@reductions[["umap"]]@cell.embeddings
+umap3<-merge(umap2,sample_group,by="row.names")
+write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\umap2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
 
 #dims = 1:10 即选取前10个主成分来分类细胞。
 #查看前5个细胞的分类ID
@@ -224,6 +226,9 @@ region_number_up3<-matrix(as.numeric(unlist(region_number_up3) ),ncol = ncol(reg
 rownames(region_number_up3)<-rownames(region_number_up2)
 colnames(region_number_up3)<-colnames(region_number_up2)[-1]
 
+
+write.table(region_number_up,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\region_number_up.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
 p=ggplot(data=region_number_up,
          aes(x=Comparison,y=as.numeric(numbers),
              group=regoin,colour=regoin))+
@@ -251,6 +256,7 @@ region_number_down3<-region_number_down2[,-1]
 region_number_down3<-matrix(as.numeric(unlist(region_number_down3) ),ncol = ncol(region_number_down3))
 rownames(region_number_down3)<-rownames(region_number_down2)
 colnames(region_number_down3)<-colnames(region_number_down2)[-1]
+write.table(region_number_down,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\region_number_down.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 p1=ggplot(data=region_number_down,
          aes(x=Comparison,y=as.numeric(numbers),
@@ -268,10 +274,7 @@ p1=ggplot(data=region_number_down,
   theme_bw()
 
 p1
-
-
 F4data<-rbind( cbind(rownames(region_number_up3), region_number_up3,"Up"),cbind(rownames(region_number_down3), region_number_down3,"Down")) 
-
 write.table(F4data,"D:\\aging\\RESULT\\1-Spatiotemporal quantification\\F4data.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
@@ -305,6 +308,9 @@ pheatmap(region_number_updown3,
          color = myColor,
          breaks=myBreaks, 
          annotation_legend = FALSE, gaps_col = c(4))
+write.table(region_number_updown3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+
 #################################Fig.2-F  #########################
 setwd("D:\\aging\\data\\geo\\region_DEG\\group\\5")
 b<-list.files()
@@ -314,18 +320,15 @@ expmean_gene1<-as.data.frame(t(expmean_gene))
 expmean_gene1<-cbind(rownames(expmean_gene1),expmean_gene1)
 colnames(expmean_gene1)<-expmean_gene1[1,]
 expmean_gene1<-expmean_gene1[-1,]
-
-
-
 re_out_p<-c()
 dataout<-c()
 for (i in 1:length(b)) {
   group <-read.table(b[i],header=T,sep = "\t", quote = "",fill = T)
-  group1 <- merge(group,sample_inf,by.x = "childhood",by.y = "Sample_geo_accession")
+  group1 <- merge(group,sample_inf,by.x = "childhood",by.y = "samples")
   group2 <- merge(group1,expmean_gene1,by.x = "childhood",by.y = "ID_REF")
   pos_count<-0
   neg_count<-0
-  for (j in 7:ncol(group2)) {
+  for (j in 10:ncol(group2)) {
     re<-cor.test(group2$age,as.numeric(group2[,j]), method =  "spearman",exact=FALSE)
     pvalue<-re[[3]]
     rvalue<-re[[4]]
@@ -335,30 +338,22 @@ for (i in 1:length(b)) {
     }else if(pvalue<0.05 & rvalue<0){
       neg_count<-neg_count+1
     }
-    
     dataouti<-cbind(colnames(group2)[j],pvalue,rvalue,strsplit(b[i],"_")[[1]][1])
     dataout<-rbind(dataout,dataouti)
     print(paste(i,j,ncol(group2),sep = "____"))
-    
   }
   out1<-cbind(strsplit(b[i],"_")[[1]][1], pos_count,neg_count)
   
   re_out_p<-rbind(re_out_p,out1) 
-
-  
 }
-
 re_out_p<-as.data.frame(re_out_p)
 dataout<-as.data.frame(dataout)
 write.table(re_out_p,"D:\\aging\\data\\geo\\region_DEG\\Spearman5_re_out_p.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
 write.table(dataout,"D:\\aging\\data\\geo\\region_DEG\\Spearman5.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-
 
 dataout<-read.table("D:\\aging\\data\\geo\\region_DEG\\Spearman5.txt",header=T,sep = "\t", quote = "",fill = T)
 dataout$regulation<-"Positive"
 dataout$regulation[dataout$rvalue<=0]<-"Negative"
-
 dataout<-dataout[dataout$pvalue<0.05,]
 
 
@@ -386,6 +381,9 @@ ggplot(re_out_p1, aes(x = reorder(V1,-as.numeric(V2)), y=as.numeric(V2), fill = 
             color = 'white', size = 0.5) +
   geom_alluvium(width = 0.6, alpha = 1, knot.pos = 0.35,
                 fill = NA, color = 'white', size = 0.5) #再叠加一层白色描边加强一下效果
+write.table(re_out_p1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1F.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+
 #################################Fig.2-G  #########################
 rm(list=ls())
 library(WGCNA)
@@ -457,8 +455,9 @@ for (i in 15:length(b)) {
   # reassignThreshold 是否在模块之间重新分配基因的p值比率阈值，mergeCutHeight 树状图切割高度
   # numericLabels 返回的模块应该用颜色（FALSE）还是数字（TRUE）标记,pamRespectsDendro树状图相关参数
   # saveTOMs 字符串的向量，saveTOMFileBase 包含包含共识拓扑重叠文件的文件名库的字符串
-  net = blockwiseModules(datExpr, power = sft$powerEstimate,TOMType = "unsigned", minModuleSize = 30,reassignThreshold = 0, 
-                         mergeCutHeight = 0.25,numericLabels = TRUE, pamRespectsDendro = FALSE,saveTOMs = TRUE,
+  net = blockwiseModules(datExpr, power = sft$powerEstimate,TOMType = "unsigned", minModuleSize = 30,
+                         reassignThreshold = 0, mergeCutHeight = 0.25,numericLabels = TRUE, 
+                         pamRespectsDendro = FALSE,saveTOMs = TRUE,
                          saveTOMFileBase = "TOM",verbose = 3)
   table(net$colors)
   # open a graphics window
@@ -677,6 +676,17 @@ dfbarsigup1<-as.data.frame(table(dfbarsig[dfbarsig$R>=0,]$region))
 dfbarsigdown1<-as.data.frame(table(dfbarsig[dfbarsig$R<=0,]$region))
 dfbarsigdown1$Freq<- -dfbarsigdown1$Freq
 
+dfbarsigup
+write.table(dfbarsigup1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G1.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dfbarsigdown1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+write.table(dfbarsigup,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G3.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dfbarsigdown,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G4.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dt,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G5.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dfcol,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G6.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+
+
 dfbarsigup$total<-dfbarsigup$Freq-dfbarsigdown$Freq
 
 #绘制背景柱：
@@ -755,14 +765,14 @@ sample_group <-cbind(rownames(sample_group),sample_group)
 group_list<-c("childhood","Adolescence","Young","Middle","Late")
 for (k in 1:5) {
   group<-sample_group[sample_group$group==group_list[k],]
-  region1<-c("CBC","MD","STR","NCX","HIP","AMY")
-  #region1<-c("V1C","ITC","IPC","A1C","STC","MFC",
-  #           "OFC","DFC","VFC","M1C","S1C")
+  #region1<-c("CBC","MD","STR","NCX","HIP","AMY")
+  region1<-c("V1C","ITC","IPC","A1C","STC","MFC",
+             "OFC","DFC","VFC","M1C","S1C")
   group_mat<-expmean_gene[,1]
   data<-matrix(0,ncol = length(region1),nrow = length(region1))
   for (i in 1:length(region1)) {
-    region_gene<-expmean_gene[,sapply(group$samples[group$region1==region1[i]],function(x){which(colnames(expmean_gene)==x)})]
-    #region_gene<-expmean_gene[,sapply(group$samples[group$region==region1[i]],function(x){which(colnames(expmean_gene)==x)})]
+    #region_gene<-expmean_gene[,sapply(group$samples[group$region1==region1[i]],function(x){which(colnames(expmean_gene)==x)})]
+    region_gene<-expmean_gene[,sapply(group$samples[group$region==region1[i]],function(x){which(colnames(expmean_gene)==x)})]
     
     region_mean<-as.data.frame(apply(region_gene,1,mean)) 
     group_mat<-cbind(group_mat,region_mean)
@@ -780,7 +790,7 @@ for (k in 1:5) {
   rownames(data)<-region1
   myColor <- colorRampPalette(c("#154182", "#FFFFFF", "#99131D"))(length(seq(0.98,1,by=0.001)))
   myBreaks <- seq(0.98,1,by=0.001)
-  #write.table(data,paste( "D:\\aging\\RESULT\\9online tool\\1-1\\",group_list[k],"_ Heatmap matrix_6.txt",sep="" ),col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+  write.table(data,paste("D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1I_",group_list[k],".txt" ,sep = "") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
   
   pheatmap(data, 
            #annotation_col = annotation_col, 
@@ -792,7 +802,7 @@ for (k in 1:5) {
           color = myColor,
           breaks=myBreaks, 
           annotation_legend = FALSE,
-          filename=paste("D:\\aging\\RESULT\\Spatiotemporal quantification\\",group_list[k],"_ Heatmap matrix.pdf"),
+          #filename=paste("D:\\aging\\RESULT\\Spatiotemporal quantification\\",group_list[k],"_ Heatmap matrix.pdf"),
           main = group_list[k])
   
 

@@ -61,7 +61,7 @@ for(i in 1:length(dir)){
   brain[[i]] <-Seurat::Load10X_Spatial(data.dir = dir[i])
   brain[[i]]@meta.data$orig.ident <-names(dir)[i]
 }
-for (i in 1:length(brain)) {
+for (i in 11:length(brain)) {
   brain[[i]][["percent.mt"]] <- PercentageFeatureSet(brain[[i]], pattern = "^MT[-]")
   brain[[i]] <- subset(brain[[i]], subset = nFeature_Spatial > 400 & nCount_Spatial > 1000 & percent.mt <50)
   brain[[i]] <- SCTransform(brain[[i]], assay = "Spatial", return.only.var.genes = FALSE, verbose = FALSE)} ##SCT标准化
@@ -71,7 +71,8 @@ setwd("D:\\aging\\RESULT\\7mergedata") #设置输出路径
 
 brain.merge <- merge(brain[[1]], y=c(brain[[2]],brain[[3]],brain[[4]],brain[[5]],
                                      brain[[6]],brain[[7]],brain[[8]],brain[[9]],
-                                     brain[[10]],brain[[11]],brain[[12]],brain[[13]],
+                                     #brain[[10]],
+                                     brain[[11]],brain[[12]],brain[[13]],
                                      brain[[14]],brain[[15]],brain[[16]],brain[[17]],
                                      brain[[18]],brain[[19]],brain[[20]],brain[[21]],
                                      brain[[22]],brain[[23]],brain[[24]],brain[[25]],
@@ -89,7 +90,8 @@ VariableFeatures(brain.merge) <- c(VariableFeatures(brain[[1]]), VariableFeature
                                    VariableFeatures(brain[[3]]), VariableFeatures(brain[[4]]),
                                    VariableFeatures(brain[[5]]), VariableFeatures(brain[[6]]),
                                    VariableFeatures(brain[[7]]), VariableFeatures(brain[[8]]),
-                                   VariableFeatures(brain[[9]]), VariableFeatures(brain[[10]]),
+                                   VariableFeatures(brain[[9]]), 
+                                   #VariableFeatures(brain[[10]]),
                                    VariableFeatures(brain[[11]]), VariableFeatures(brain[[12]]),
                                    VariableFeatures(brain[[13]]), VariableFeatures(brain[[14]]),
                                    VariableFeatures(brain[[15]]), VariableFeatures(brain[[16]]),
@@ -113,7 +115,7 @@ brain.merge <- RunUMAP(brain.merge, reduction = "pca", dims = 1:30)
 
 
 #brain.merge <- RunTSNE(brain.merge, reduction = "pca", dims = 1:30)
-#pdf("merge_umap_samples.pdf",width=10,height=5)
+pdf("merge_umap_samples.pdf",width=10,height=5)
 DimPlot(brain.merge, reduction = "umap", group.by = "orig.ident",cols = c("#CB6D5D","#D56B19","#FAEACE","#F8B9AB",
                                                                           "#85AD9B","#747D90","#D93B45","#E32B2D",
                                                                           "#AFBED2","#827964","#577465",
@@ -124,17 +126,19 @@ DimPlot(brain.merge, reduction = "umap", group.by = "orig.ident",cols = c("#CB6D
 
 
 
-#dev.off()
-#pdf("merge_umap_group.pdf",width=10,height=5)
+dev.off()
+pdf("merge_umap_group.pdf",width=10,height=5)
 DimPlot(brain.merge, reduction = "umap", group.by = "orig.ident",cols = c("#a3ced6","#1f2a6b","#bb322b","#e8a361",
                                                                           "#446799","#e8a361","#bb322b","#bb322b",
-                                                                          "#1f2a6b","#bb322b","#1f2a6b",
+                                                                          "#1f2a6b",
+                                                                          "#bb322b",
+                                                                          "#1f2a6b",
                                                                           "#bb322b","#bb322b","#e8a361","#446799",
                                                                           "#e8a361","#bb322b","#e8a361","#e8a361",
                                                                           "#e8a361","#bb322b","#e8a361","#bb322b",
                                                                           "#446799","#e8a361","#1f2a6b","#bb322b"))
 
-#dev.off()
+dev.off()
 
 ##################  cortex  samples #################
 load("Brain_ST.Rdata")
@@ -290,6 +294,17 @@ rownames(predictions.res)<-"CAS"
 
 cell_types <- rownames(predictions.res)
 brain.merge1 <- AddMetaData(object= brain.merge1, metadata = predictions.res[cell_types,], col.name = cell_types)
+
+umap2<- brain.merge1@reductions[["umap"]]@cell.embeddings
+
+sample_group<-as.data.frame(cbind(brain.merge1@assays[["SCT"]]@data@Dimnames[[2]],brain.merge1@meta.data[["orig.ident"]],brain.merge1@meta.data[["CAS"]])) 
+rownames(sample_group)<-sample_group$V1
+umap3<-merge(umap2,sample_group,by="row.names")
+write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\A-C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+
 p2<-DimPlot(brain.merge1, reduction = "umap", label = T, repel=T, alpha = 0.5,group.by = "orig.ident",cols = c("#ec95b3","#f18e25","#f5c51e",
                                                                                                       "#57a8d7","#ac536a","#735d96",
                                                                                                       "#5A7EB3","#cf1223","#f4da9a",
@@ -436,6 +451,8 @@ CAS_number<-rbind(cbind(brain[[5]]@meta.data[["CAS"]],substr(brain[[5]]@meta.dat
                   
                   ) 
 colnames(CAS_number)<-c("CAS","postion","sample")
+write.table(CAS_number,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
 library(ggpubr) 
 library(patchwork) 
 library(ggsci)
@@ -460,6 +477,9 @@ ggplot(CAS_number,aes(x = sample,y =as.numeric(CAS)  ,color = postion))+
 dev.off()
 
 i=19
+
+umap3<-as.data.frame(brain[[19]]@meta.data) 
+write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\F-H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 p1 <- DimPlot(brain[[i]], reduction = "umap", label = TRUE,cols=c("#ec95b3","#f18e25","#f5c51e",
                                                                   "#57a8d7","#ac536a","#735d96",
@@ -493,6 +513,7 @@ cbind(subset(brain[[i]], idents = 5)@meta.data[["CAS"]],"C5") ,
 CAS_269<-as.data.frame(CAS_269)
 colnames(CAS_269)<-c("CAS","Cluster")
 CAS_269$CAS<-as.numeric(CAS_269$CAS)
+write.table(CAS_269,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\I.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 pdf("269_clusters_box.pdf",width=7,height=5)  
 ggboxplot(CAS_269, x="Cluster", y="CAS", color="Cluster", add="jitter", legend="none") +
@@ -525,6 +546,7 @@ load("Brain_cas.Rdata")
 hk_gene1<-read.table("D:\\aging\\RESULT\\2-3-CAS\\B_247genes.txt",header=T,sep = "\t", quote = "")
 MHCII_gene<-c("CD74","CTSD","FCER1G","HLA-DMA","HLA-DMB","HLA-DPA1","HLA-DRA","TREM2")
 genelist<-intersect(as.character(hk_gene1$Var1), MHCII_gene)
+j=5
 for (j in 1:length(genelist) ) {
   genedata<-c()
   for (i in c(5,6,15,16,24,25,9,10,26,27,11,12,2,3)) {
@@ -572,13 +594,80 @@ for (j in 1:length(genelist) ) {
       ylim(c(0,round(maxnum,2) ))+
       theme(axis.text.x = element_text(angle = 45))+#字体大,
       scale_x_discrete(limits=c("UKF248(44)","UKF265(55)","UKF313(57)","UKF256(64)","UKF334(73)","UKF259(75)","UKF242(81)"))
-      
-    ggsave(paste("D:\\aging\\RESULT\\7mergedata\\",genelist[j],"_",k,".pdf", sep= ""), p1,width = 10, height = 10, units = "cm" )
+    write.table(df1,paste("D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\M_",k,".txt",sep = "") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+    
+    #ggsave(paste("D:\\aging\\RESULT\\7mergedata\\",genelist[j],"_",k,".pdf", sep= ""), p1,width = 10, height = 10, units = "cm" )
     
   }
-
+  
 }
 
+#rm(list = ls())
+setwd("D:\\aging\\RESULT\\7mergedata") #设置输出路径
+load("Brain_cas.Rdata")
+hk_gene1<-read.table("D:\\aging\\RESULT\\2-3-CAS\\B_247genes.txt",header=T,sep = "\t", quote = "")
+
+sample_cor_data<-c()
+for (i in c(5,15,24,9,26,11,2)) {
+  expdata1<-as.data.frame(brain[[i]]@assays[["SCT"]]@data ) 
+  expdata2<-as.data.frame(brain[[i+1]]@assays[["SCT"]]@data ) 
+  genelist1<-intersect(as.character(hk_gene1$Var1),rownames(expdata1)  )
+  genelist<-intersect(genelist1,rownames(expdata2)  )
+  set.seed(1)
+  if(ncol(expdata1)>ncol(expdata2)){
+  index<-sample(1:ncol(expdata1),ncol(expdata2), replace = F)
+  expdata1<-expdata1[,index]
+  }else{
+    index<-sample(1:ncol(expdata2),ncol(expdata1), replace = F)
+    expdata2<-expdata2[,index]}  
+  gene_cor_data<-c()
+  for (j in 1:length(genelist) ) {
+  expdata1_genej<-expdata1[rownames(expdata1)==genelist[j],]
+  expdata2_genej<-expdata2[rownames(expdata2)==genelist[j],]
+  re<-cor.test(as.numeric(expdata1_genej) ,as.numeric(expdata2_genej))
+  pvalue<- re$p.value
+  rvalue<- re$estimate
+  gene_cor_data1<-c(brain[[i]]@meta.data$orig.ident[1],brain[[i+1]]@meta.data$orig.ident[1],genelist[j],pvalue,rvalue)
+  gene_cor_data<-rbind(gene_cor_data,gene_cor_data1)
+  print(paste(j,length(genelist),sep = "/") )
+  }
+  sample_cor_data<-rbind(sample_cor_data,gene_cor_data)
+  print(paste(i,j,length(genelist),sep = "/") )
+}
+sample_cor_data<-as.data.frame(sample_cor_data)
+sample_cor_data_p<-drop_na(sample_cor_data)
+
+colnames(sample_cor_data_p)<-c("cortex","tumor","gene","P","R")
+sample_cor_data_p$sample<-substring(sample_cor_data_p$cortex,2,7 )
+sample_cor_data_p$logp<- -log10(as.numeric(sample_cor_data_p$P ) )
+write.table(sample_cor_data_p,"D:\\aging\\投稿\\1-NC\\修稿1\\cor\\sample_cor_data.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+
+sample_cor_data_p$sample <- factor(sample_cor_data_p$sample, level=c("UKF248", "UKF265", "UKF313","UKF256", "UKF334", "UKF259", "UKF242"))
 
 
+p1<- ggplot(sample_cor_data_p,aes(x=as.numeric(logp) ,fill=sample))+
+  geom_density(position="stack")+
+  scale_fill_manual(values=c("UKF248" = "#FCE3D7","UKF265"= "#F6B89F", "UKF313" = "#F08D70",
+                             "UKF256" = "#EC674A","UKF334"= "#E13D2E", "UKF259" = "#BF1E20", "UKF242" = "#911D22"))+
+  #guides(fill=guide_legend(title=NULL)) +
+  theme_classic()+
+  geom_vline(xintercept = 1.30103)
 
+p1 
+  
+sample_cor_data_R<-sample_cor_data_p[sample_cor_data_p$P<0.05 ,]
+
+
+p2<- ggplot(sample_cor_data_R,aes(x=as.numeric(R) ,fill=sample))+geom_density(position="stack")+
+  scale_fill_manual(values=c("UKF248" = "#FCE3D7","UKF265"= "#F6B89F", "UKF313" = "#F08D70",
+                             "UKF256" = "#EC674A","UKF334"= "#E13D2E", "UKF259" = "#BF1E20", "UKF242" = "#911D22"))+
+  #scale_fill_brewer(palette = "Reds")+
+  #guides(fill=guide_legend(title=NULL)) +
+  theme_classic()
+
+p2 
+
+
+  ggsave(p1, file="D:\\aging\\投稿\\1-NC\\修稿1\\cor\\P.pdf", width=12, height=10)
+  ggsave(p2, file="D:\\aging\\投稿\\1-NC\\修稿1\\cor\\R.pdf", width=12, height=10)
+  
