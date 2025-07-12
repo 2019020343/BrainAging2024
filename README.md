@@ -1,4 +1,4 @@
-# Comprehensive assessment of regional patterns of brain aging and implications for glioblastoma based on radiogenomic analysis
+# Regional Heterogeneity of the Brain Reveals Stability-Preserving Capacity of the Frontal Cortex in Aging and glioblastoma
 
 ## 1. Introduction
 
