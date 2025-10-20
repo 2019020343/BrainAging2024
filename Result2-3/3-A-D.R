@@ -185,7 +185,7 @@ p1<-ggplot(region_DEG_ss, aes(logFC_F, logFC_M,colour = group1)) +
                                "#436493"))
 
 p1
-write.table(region_DEG_ss,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\B_A1C_YM.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(region_DEG_ss,"D:\\aging\\fig_data\\B_A1C_YM.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 
@@ -209,7 +209,7 @@ p2<-ggplot(YL_region_DEG_ss, aes(logFC_F, logFC_M,colour = group1)) +
   theme(legend.position = "none")+
   scale_color_manual(values = c("#B2522D",
                                 "#436493"))
-write.table(YL_region_DEG_ss,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\B_A1C_YL.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(YL_region_DEG_ss,"D:\\aging\\fig_data\\B_A1C_YL.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 p2
 ML_F_sig<-region_DEG_F[region_DEG_F$ML_P.Value<0.05 ,c(1,2)] 
@@ -236,7 +236,7 @@ p3<-ggplot(region_DEG_ss, aes(logFC_F, logFC_M,colour = group1)) +
 
 p3
 
-write.table(region_DEG_ss,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\B_A1C_ML.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(region_DEG_ss,"D:\\aging\\fig_data\\B_A1C_ML.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 #############  clusterProfiler  #########################
 rm(list = ls())
@@ -285,9 +285,9 @@ region_fre_10_all<-read.table("D:\\aging\\RESULT\\2-3-CAS\\B_247genes.txt" , sep
 
 
   
-write.table(region_fre_10_F,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\A_VENN_F.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-write.table(region_fre_10_M,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\A_VENN_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-write.table(region_fre_10_all,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\A_VENN_ALL.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(region_fre_10_F,"D:\\aging\\fig_data\\A_VENN_F.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(region_fre_10_M,"D:\\aging\\fig_data\\A_VENN_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(region_fre_10_all,"D:\\aging\\fig_data\\A_VENN_ALL.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 library(ggvenn)
 dat <- list( Females =as.character(region_fre_10_F$Var1)  ,  Males =as.character(region_fre_10_M$Var1) , CAS_gene = region_fre_10_all$Var1)
