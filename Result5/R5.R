@@ -300,9 +300,9 @@ umap2<- brain.merge1@reductions[["umap"]]@cell.embeddings
 sample_group<-as.data.frame(cbind(brain.merge1@assays[["SCT"]]@data@Dimnames[[2]],brain.merge1@meta.data[["orig.ident"]],brain.merge1@meta.data[["CAS"]])) 
 rownames(sample_group)<-sample_group$V1
 umap3<-merge(umap2,sample_group,by="row.names")
-write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\A-C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(umap3,"D:\\aging\\fig_data\\A-C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
-write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(umap3,"D:\\aging\\fig_data\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 p2<-DimPlot(brain.merge1, reduction = "umap", label = T, repel=T, alpha = 0.5,group.by = "orig.ident",cols = c("#ec95b3","#f18e25","#f5c51e",
@@ -451,7 +451,7 @@ CAS_number<-rbind(cbind(brain[[5]]@meta.data[["CAS"]],substr(brain[[5]]@meta.dat
                   
                   ) 
 colnames(CAS_number)<-c("CAS","postion","sample")
-write.table(CAS_number,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(CAS_number,"D:\\aging\\fig_data\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 library(ggpubr) 
 library(patchwork) 
@@ -479,7 +479,7 @@ dev.off()
 i=19
 
 umap3<-as.data.frame(brain[[19]]@meta.data) 
-write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\F-H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(umap3,"D:\\aging\\fig_data\\F-H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 p1 <- DimPlot(brain[[i]], reduction = "umap", label = TRUE,cols=c("#ec95b3","#f18e25","#f5c51e",
                                                                   "#57a8d7","#ac536a","#735d96",
@@ -513,7 +513,7 @@ cbind(subset(brain[[i]], idents = 5)@meta.data[["CAS"]],"C5") ,
 CAS_269<-as.data.frame(CAS_269)
 colnames(CAS_269)<-c("CAS","Cluster")
 CAS_269$CAS<-as.numeric(CAS_269$CAS)
-write.table(CAS_269,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\I.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(CAS_269,"D:\\aging\\fig_data\\I.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 pdf("269_clusters_box.pdf",width=7,height=5)  
 ggboxplot(CAS_269, x="Cluster", y="CAS", color="Cluster", add="jitter", legend="none") +
@@ -594,7 +594,7 @@ for (j in 1:length(genelist) ) {
       ylim(c(0,round(maxnum,2) ))+
       theme(axis.text.x = element_text(angle = 45))+#字体大,
       scale_x_discrete(limits=c("UKF248(44)","UKF265(55)","UKF313(57)","UKF256(64)","UKF334(73)","UKF259(75)","UKF242(81)"))
-    write.table(df1,paste("D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\M_",k,".txt",sep = "") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+    write.table(df1,paste("D:\\aging\\fig_data\\M_",k,".txt",sep = "") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
     
     #ggsave(paste("D:\\aging\\RESULT\\7mergedata\\",genelist[j],"_",k,".pdf", sep= ""), p1,width = 10, height = 10, units = "cm" )
     
@@ -640,7 +640,7 @@ sample_cor_data_p<-drop_na(sample_cor_data)
 colnames(sample_cor_data_p)<-c("cortex","tumor","gene","P","R")
 sample_cor_data_p$sample<-substring(sample_cor_data_p$cortex,2,7 )
 sample_cor_data_p$logp<- -log10(as.numeric(sample_cor_data_p$P ) )
-write.table(sample_cor_data_p,"D:\\aging\\投稿\\1-NC\\修稿1\\cor\\sample_cor_data.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sample_cor_data_p,"D:\\aging\\cor\\sample_cor_data.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 sample_cor_data_p$sample <- factor(sample_cor_data_p$sample, level=c("UKF248", "UKF265", "UKF313","UKF256", "UKF334", "UKF259", "UKF242"))
 
@@ -668,6 +668,6 @@ p2<- ggplot(sample_cor_data_R,aes(x=as.numeric(R) ,fill=sample))+geom_density(po
 p2 
 
 
-  ggsave(p1, file="D:\\aging\\投稿\\1-NC\\修稿1\\cor\\P.pdf", width=12, height=10)
-  ggsave(p2, file="D:\\aging\\投稿\\1-NC\\修稿1\\cor\\R.pdf", width=12, height=10)
+  ggsave(p1, file="D:\\aging\\cor\\P.pdf", width=12, height=10)
+  ggsave(p2, file="D:\\aging\\cor\\R.pdf", width=12, height=10)
   
