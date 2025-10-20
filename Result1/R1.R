@@ -54,7 +54,7 @@ pbmc <- FindClusters(pbmc, resolution = 0.8)
 pbmc1 <- RunUMAP(pbmc, dims = 1:i, verbose = T)
 umap2<- pbmc1@reductions[["umap"]]@cell.embeddings
 umap3<-merge(umap2,sample_group,by="row.names")
-write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\umap2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(umap3,"D:\\aging\\fig_data\\umap2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 #dims = 1:10 即选取前10个主成分来分类细胞。
@@ -227,7 +227,7 @@ rownames(region_number_up3)<-rownames(region_number_up2)
 colnames(region_number_up3)<-colnames(region_number_up2)[-1]
 
 
-write.table(region_number_up,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\region_number_up.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(region_number_up,"D:\\aging\\fig_data\\region_number_up.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 p=ggplot(data=region_number_up,
          aes(x=Comparison,y=as.numeric(numbers),
@@ -256,7 +256,7 @@ region_number_down3<-region_number_down2[,-1]
 region_number_down3<-matrix(as.numeric(unlist(region_number_down3) ),ncol = ncol(region_number_down3))
 rownames(region_number_down3)<-rownames(region_number_down2)
 colnames(region_number_down3)<-colnames(region_number_down2)[-1]
-write.table(region_number_down,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\region_number_down.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(region_number_down,"D:\\aging\\fig_data\\region_number_down.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 p1=ggplot(data=region_number_down,
          aes(x=Comparison,y=as.numeric(numbers),
@@ -308,7 +308,7 @@ pheatmap(region_number_updown3,
          color = myColor,
          breaks=myBreaks, 
          annotation_legend = FALSE, gaps_col = c(4))
-write.table(region_number_updown3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(region_number_updown3,"D:\\aging\\fig_data\\1E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 #################################Fig.2-F  #########################
@@ -381,7 +381,7 @@ ggplot(re_out_p1, aes(x = reorder(V1,-as.numeric(V2)), y=as.numeric(V2), fill = 
             color = 'white', size = 0.5) +
   geom_alluvium(width = 0.6, alpha = 1, knot.pos = 0.35,
                 fill = NA, color = 'white', size = 0.5) #再叠加一层白色描边加强一下效果
-write.table(re_out_p1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1F.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(re_out_p1,"D:\\aging\\fig_data\\1F.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 #################################Fig.2-G  #########################
@@ -677,13 +677,13 @@ dfbarsigdown1<-as.data.frame(table(dfbarsig[dfbarsig$R<=0,]$region))
 dfbarsigdown1$Freq<- -dfbarsigdown1$Freq
 
 dfbarsigup
-write.table(dfbarsigup1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G1.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-write.table(dfbarsigdown1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dfbarsigup1,"D:\\aging\\fig_data\\1G1.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dfbarsigdown1,"D:\\aging\\fig_data\\1G2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
-write.table(dfbarsigup,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G3.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-write.table(dfbarsigdown,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G4.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-write.table(dt,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G5.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-write.table(dfcol,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1G6.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dfbarsigup,"D:\\aging\\fig_data\\1G3.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dfbarsigdown,"D:\\aging\\fig_data\\1G4.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dt,"D:\\aging\\fig_data\\1G5.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(dfcol,"D:\\aging\\fig_data\\1G6.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 
