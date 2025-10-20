@@ -29,7 +29,7 @@ data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$
 
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF6_HOA\\B_Y.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\\fig_data\\SF6_HOA\\B_Y.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 ggplot(data, aes( r_MSN, r_MIND,color=group)) +
@@ -75,7 +75,7 @@ data$group="Inconsistent"
 data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$r_MIND<=0.5))]<-"Consistent"
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF6_HOA\\B_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF6_HOA\\B_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 ggplot(data, aes(r_MSN, r_MIND,color=group)) +
@@ -121,7 +121,7 @@ data$group="Inconsistent"
 data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$r_MIND<=0.5))]<-"Consistent"
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF6_HOA\\B_L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF6_HOA\\B_L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 
@@ -173,7 +173,7 @@ data$group="Inconsistent"
 data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$r_MIND<=0.5))]<-"Consistent"
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF6_HOA\\D_Y.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF6_HOA\\D_Y.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 ggplot(data, aes(r_MSN, r_MIND,color=group)) +
@@ -219,7 +219,7 @@ data$group="Inconsistent"
 data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$r_MIND<=0.5))]<-"Consistent"
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF6_HOA\\D_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF6_HOA\\D_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 ggplot(data, aes(r_MSN, r_MIND,color=group)) +
@@ -266,7 +266,7 @@ data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$
 
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF6_HOA\\D_L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF6_HOA\\D_L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ggplot(data, aes(r_MSN, r_MIND,color=group)) +
   geom_point() +  # 添加散点图层，点的大小表示体重
@@ -320,7 +320,7 @@ data$group="Inconsistent"
 data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$r_MIND<=0.5))]<-"Consistent"
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF7_DK\\B_Y.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF7_DK\\B_Y.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ggplot(data, aes(r_MSN, r_MIND,color=group)) +
   geom_point() +  # 添加散点图层，点的大小表示体重
@@ -360,7 +360,7 @@ data$group="Inconsistent"
 data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$r_MIND<=0.5))]<-"Consistent"
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF7_DK\\B_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF7_DK\\B_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 
@@ -403,7 +403,7 @@ data$group="Inconsistent"
 data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$r_MIND<=0.5))]<-"Consistent"
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF7_DK\\B_L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF7_DK\\B_L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ggplot(data, aes(r_MSN, r_MIND,color=group)) +
   geom_point() +  # 添加散点图层，点的大小表示体重
@@ -445,7 +445,7 @@ data$group="Inconsistent"
 data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$r_MIND<=0.5))]<-"Consistent"
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF7_DK\\D_Y.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF7_DK\\D_Y.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 ggplot(data, aes(r_MSN, r_MIND,color=group)) +
   geom_point() +  # 添加散点图层，点的大小表示体重
   geom_smooth( method = "lm",color = "#A0C9D1") + 
@@ -489,7 +489,7 @@ data$group="Inconsistent"
 data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$r_MIND<=0.5))]<-"Consistent"
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF7_DK\\D_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF7_DK\\D_M.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 
@@ -536,7 +536,7 @@ data$group[which((data$r_MSN>=0.5 & data$r_MIND>=0.5) | (data$r_MSN<=0.5 & data$
 
 data1<-cbind(data$r_MSN,data$r_MIND,data$group) 
 colnames(data1)<-c("r_MSN","r_MIND","group")
-write.table(data1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF7_DK\\D_L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data1,"D:\\aging\\fig_data\\SF7_DK\\D_L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 ggplot(data, aes(r_MSN, r_MIND,color=group)) +
@@ -694,8 +694,8 @@ for (j in 1:2) {
   print(p4)
   dev.off()
   
-  write.table(DLBS_BAatlas_Period_cor5_1,paste("D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\6\\",list0[j],"_16region_MSN_box.txt",sep="") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-  write.table(DLBS_BAatlas_Period_cor5_2,paste("D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\6\\",list0[j],"_16region_MIND_box.txt",sep="") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+  write.table(DLBS_BAatlas_Period_cor5_1,paste("D:\\aging\\fig_data\\6\\",list0[j],"_16region_MSN_box.txt",sep="") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+  write.table(DLBS_BAatlas_Period_cor5_2,paste("D:\\aging\\fig_data\\6\\",list0[j],"_16region_MIND_box.txt",sep="") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
   
   
 }
@@ -785,7 +785,7 @@ for (m in 1:3) {
     guides(fill=guide_legend(title=NULL)) +theme_bw()+theme(legend.position = c(0.2,0.8))+
     labs( title=paste(case_control[n],"_",list0[m],"_cor",sep = ""))
   ggsave(p1, file=paste("D:\\aging\\RESULT\\","GBM_",list0[m],"_cor.pdf",sep = ""), width=12, height=10)
-  write.table(Period_GBM,paste("D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\6\\",list0[m],"_F.txt",sep = ""),col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+  write.table(Period_GBM,paste("D:\\aging\\fig_data\\6\\",list0[m],"_F.txt",sep = ""),col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
   
   
   Period_DLBS<-Period[Period$case_control=="DLBS" & Period$Group!="MIND_All" & Period$Group!="MSN_All",]
@@ -797,7 +797,7 @@ for (m in 1:3) {
     labs( title=paste(case_control[n],"_",list0[m],"_cor",sep = ""))
   ggsave(p2, file=paste("D:\\aging\\RESULT\\","DLBS_",list0[m],"_cor.pdf",sep = ""), width=12, height=10) 
   
-  write.table(Period_DLBS,paste("D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\6\\",list0[m],"_E.txt",sep = "") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+  write.table(Period_DLBS,paste("D:\\aging\\fig_data\\6\\",list0[m],"_E.txt",sep = "") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
   
   
 }
