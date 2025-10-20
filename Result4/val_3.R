@@ -78,7 +78,7 @@ sigScores_group$group1[sigScores_group$Sample_characteristics_ch1.1 < 50]="40"
 sigScores_group$group1[sigScores_group$Sample_characteristics_ch1.1 < 40]="30"
 sigScores_group$group1[sigScores_group$Sample_characteristics_ch1.1 < 30]="20"
 
-write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\J.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group,"D:\\aging\\fig_data\\J.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 P3<-ggplot(sigScores_group,aes(x=as.character(group1) ,y=as.numeric(sigScores) ,fill=as.character(group1)))+ 
   stat_boxplot(geom = "errorbar")+
@@ -125,7 +125,7 @@ P4<-ggplot(sigScores_group,aes(x=group1,y=as.numeric(sigScores) ,fill=Sample_cha
                size = 0.5)
 
 P4
-write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF5\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group,"D:\\aging\\fig_data\\SF5\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ###############xcell ###############
 library(xCell)
@@ -144,7 +144,7 @@ xCell_group$group[xCell_group$Sample_characteristics_ch1.1>=12 & xCell_group$Sam
 xCell_group$group[xCell_group$Sample_characteristics_ch1.1>=20 & xCell_group$Sample_characteristics_ch1.1<40]="Young"
 xCell_group$group[xCell_group$Sample_characteristics_ch1.1>=40 & xCell_group$Sample_characteristics_ch1.1<60]="Middle"
 xCell_group$group[xCell_group$Sample_characteristics_ch1.1>60]="Late"
-write.table(xCell_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF5\\F.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(xCell_group,"D:\\aging\\fig_data\\SF5\\F.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 library(ggplot2)
@@ -176,7 +176,7 @@ for (i in 1:67) {
   
 }
 
-write.table(xCell_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\K.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(xCell_group,"D:\\aging\\fig_data\\K.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 #install.packages("ggExtra")
@@ -200,7 +200,7 @@ xCell_sigScores_cor<-as.data.frame(xCell_sigScores_cor)
 xCell_sigScores_cor_sig<-xCell_sigScores_cor[xCell_sigScores_cor$p<0.05,]
 cols<-colorRampPalette(c("#5D779B", "#FAF3BE", "#C9301D"))(200)
 
-write.table(xCell_sigScores_cor_sig,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(xCell_sigScores_cor_sig,"D:\\aging\\fig_data\\L.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 ggplot(xCell_sigScores_cor_sig, aes(x =reorder(V1,-as.numeric(r)) , y=as.numeric(r), fill=V1)) +
   scale_fill_manual( values = c("#CB6D5D","#F8B9AB","#85AD9B","#747D90",
                                 "#D93B45","#AFBED2","#8DBCCA","#827964",
@@ -230,5 +230,5 @@ i=10
      theme_classic()  +
      stat_cor( geom = "text",label.x = -0.5)+
      theme(axis.title = element_text(family = "sans", face = "bold"))
-write.table(xCell_group_point,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\L_POINT.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(xCell_group_point,"D:\\aging\\fig_data\\L_POINT.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
    
