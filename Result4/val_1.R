@@ -71,7 +71,7 @@ pbmc1 <- RunUMAP(pbmc, dims = 1:i, verbose = T)
 umap2<- pbmc1@reductions[["umap"]]@cell.embeddings
 rownames(sample_group)<-sample_group$Sample_title
 umap3<-merge(umap2,sample_group,by="row.names")
-write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(umap3,"D:\\aging\\fig_data\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 #dims = 1:10 即选取前10个主成分来分类细胞。
@@ -175,7 +175,7 @@ P3<-ggplot(sigScores_group,aes(x=as.character(Sample_age) ,y=as.numeric(sigScore
                aes(group = 1), 
                size = 0.5)
 
-write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF5\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group,"D:\\aging\\fig_data\\SF5\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ################ regression  -test #########################
 
@@ -195,7 +195,7 @@ ggplot(sigScores_group_test, aes(x=age, y=sigScores,color = region)) +
                                "#211d1e","#57a8d7","#ac536a","#735d96",
                                "#cacbd0","#f1a7a4","#cf1223","#f4da9a",
                                "#f8bf89","#136cb6","#c5b5d1","#5A7EB3"))
-write.table(sigScores_group_test,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF5\\A.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group_test,"D:\\aging\\fig_data\\SF5\\A.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 species_lst <- unique(sigScores_group_test$region)
 p_lst <- list()
@@ -238,7 +238,7 @@ ggplot(sigScores_group, aes(x=Sample_age, y=as.numeric( sigScores),color = TEST_
                                "#211d1e","#57a8d7","#ac536a","#735d96",
                                "#cacbd0","#f1a7a4","#cf1223","#f4da9a",
                              "#f8bf89","#136cb6","#c5b5d1","#5A7EB3"))
-write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF5\\A_V.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group,"D:\\aging\\fig_data\\SF5\\A_V.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 library(ggpubr)
 library(ggpmisc)
@@ -280,7 +280,7 @@ ggplot(extract_ggplotdata, aes(x =reorder(region,-slope) , y=slope*1000, fill=da
   ylim(-6,15)+
   labs(x="",y="CAS slope (x 10 -3)")+　
   theme(axis.text.x = element_text(angle = 45))
-write.table(extract_ggplotdata,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\B.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(extract_ggplotdata,"D:\\aging\\fig_data\\B.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 t.test(extract_ggplotdata$slope[extract_ggplotdata$dataset=="test"],extract_ggplotdata$slope[extract_ggplotdata$dataset=="val"],alternative = "two.sided")
 
 ##############################  neuron VS NON-neuron #################
@@ -326,7 +326,7 @@ ggplot(extract_ggplotdata, aes(x =reorder(region,-slope) , y=slope*1000, fill=ce
   theme_classic()+
   labs(x="",y="CAS slope (x 10 -3)")+　
   theme(axis.text.x = element_text(angle = 45))
-write.table(extract_ggplotdata,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(extract_ggplotdata,"D:\\aging\\fig_data\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 t.test(extract_ggplotdata$slope[extract_ggplotdata$cell=="neuron"],extract_ggplotdata$slope[extract_ggplotdata$cell=="non_neuron"],alternative = "two.sided")
 
 ##############################  Sex #################
@@ -470,7 +470,7 @@ ggplot(outdata_sig, aes(x =reorder(V1,-as.numeric(R)) , y=as.numeric(R), fill=V1
   labs(x="",y="cor")+
   theme(axis.text.x = element_text(angle = 45))+#字体大小
   geom_col(width = 0.6, color = NA, size = 0.5)
-write.table(outdata_sig,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(outdata_sig,"D:\\aging\\fig_data\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 
