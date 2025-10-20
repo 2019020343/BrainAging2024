@@ -790,7 +790,7 @@ for (k in 1:5) {
   rownames(data)<-region1
   myColor <- colorRampPalette(c("#154182", "#FFFFFF", "#99131D"))(length(seq(0.98,1,by=0.001)))
   myBreaks <- seq(0.98,1,by=0.001)
-  write.table(data,paste("D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\1I_",group_list[k],".txt" ,sep = "") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+  write.table(data,paste("D:\\aging\\fig_data\\1I_",group_list[k],".txt" ,sep = "") ,col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
   
   pheatmap(data, 
            #annotation_col = annotation_col, 
