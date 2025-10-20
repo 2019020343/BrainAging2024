@@ -49,7 +49,7 @@ ggplot(region_fre1, aes(x = Var1, y=as.numeric(Freq))) +
 
 
 
-write.table(region_fre1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\A.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(region_fre1,"D:\\aging\\fig_data\\A.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 #write.table(region_fre1,"D:\\aging\\RESULT\\3CAS\\A_region_fre1.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 ################### Fig3 B ##############
 
@@ -123,7 +123,7 @@ colnames(hk_gene)<-c("A1C_1","A1C_2","A1C_3",  "AMY_1","AMY_2","AMY_3","CBC_1","
                      "MD_1","MD_2","MD_3",  "MFC_1","MFC_2","MFC_3","OFC_1","OFC_2","OFC_3",  "S1C_1","S1C_2","S1C_3",
                      "STC_1","STC_2","STC_3",  "STR_1","STR_2","STR_3",
                      "V1C_1","V1C_2","V1C_3",  "VFC_1","VFC_2","VFC_3")
-write.table(hk_gene,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\B.txt",col.names = T, row.names = T,sep = "\t" ,append = FALSE, quote = F)
+write.table(hk_gene,"D:\\aging\\fig_data\\B.txt",col.names = T, row.names = T,sep = "\t" ,append = FALSE, quote = F)
 write.table(hk_gene,"D:\\aging\\RESULT\\2-3-CAS\\B_HEATMAP.txt",col.names = T, row.names = T,sep = "\t" ,append = FALSE, quote = F)
 #write.table(hk_gene1,"D:\\aging\\RESULT\\3CAS\\B_247genes.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
@@ -360,14 +360,14 @@ P3<-ggplot(sigScores_group,aes(x=group1,y=as.numeric(sigScores) ,fill=group1))+
                size = 0.5)
 
 P3
-#write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+#write.table(sigScores_group,"D:\\aging\\fig_data\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 sigScores_group<-read.table("D:\\aging\\RESULT\\2-3-CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
 sigScores_group2<-sigScores_group[sigScores_group$group1==20 | sigScores_group$group1==30 |sigScores_group$group1==40,]
 sigScores_group2$group1 <- factor(sigScores_group2$group1,levels = c('20','30','40'))
 
-write.table(sigScores_group2,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group2,"D:\\aging\\fig_data\\E.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 P3<-ggplot(sigScores_group2,aes(x=group1,y=as.numeric(sigScores) ,fill=Sex))+ 
   stat_boxplot(geom = "errorbar")+
@@ -407,7 +407,7 @@ library(ggExtra)
 library(ggpmisc)        
 library(palmerpenguins) 
 library(ggpubr)
-write.table(xCell_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(xCell_group,"D:\\aging\\fig_data\\H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 p <- ggplot(xCell_group, aes(sigScores, xCell_group[,11],color=region)) +
   geom_point() +  # 添加散点图层，点的大小表示体重
@@ -479,13 +479,13 @@ library(CIBERSORT)
 expmean_gene<-read.table("D:\\aging\\data\\geo\\expmean_gene.txt",header=T,row.names = 1, sep = "\t", quote = "")
 sigScores_group<-read.table("D:\\aging\\RESULT\\2-3-CAS\\sigScores_group.txt",header=T,sep = "\t", quote = "")
 expmean_gene1<-expmean_gene[,sapply(sigScores_group$V1,function(x){which(colnames(expmean_gene)==x)})]
-CIBERSORT_scores1<-read.table("D:\\aging\\投稿\\1-NC\\修稿1\\CIBERSORT\\output\\CIBERSORT.ABS.txt",header=T,sep = "\t", quote = "")
-CIBERSORT_scores1<-read.table("D:\\aging\\投稿\\1-NC\\修稿1\\CIBERSORT\\output\\CIBERSORT.REL.txt",header=T,sep = "\t", quote = "")
+CIBERSORT_scores1<-read.table("D:\\aging\\CIBERSORT\\output\\CIBERSORT.ABS.txt",header=T,sep = "\t", quote = "")
+CIBERSORT_scores1<-read.table("D:\\aging\\CIBERSORT\\output\\CIBERSORT.REL.txt",header=T,sep = "\t", quote = "")
 
 
 CIBERSORT_group<-merge(CIBERSORT_scores1,sigScores_group,by.x = "Input.Sample",by.y ="V1" )
-write.table(CIBERSORT_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF3\\B.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-write.table(CIBERSORT_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF3\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(CIBERSORT_group,"D:\\aging\\fig_data\\SF3\\B.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(CIBERSORT_group,"D:\\aging\\fig_data\\SF3\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 #install.packages("ggExtra")
 library(tidyverse)       
@@ -610,7 +610,7 @@ ggplot(sigScores_group, aes(x=age, y=as.numeric(sigScores) ,color = region)) +
 
 
 sigScores_group2<-sigScores_group[sigScores_group$Sex=="Sex: F", ]
-write.table(sigScores_group2,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\F_Female.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group2,"D:\\aging\\fig_data\\F_Female.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ggplot(sigScores_group2, aes(x=age, y=sigScores,color = region)) + 
   theme_classic()+
@@ -642,7 +642,7 @@ ggplot(sigScores_group2, aes(x=age, y=sigScores,color = region)) +
 ############# Sex fit  ######################
 
 sigScores_group3<-sigScores_group[sigScores_group$Sex=="Sex: M", ]
-write.table(sigScores_group3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\F_Male.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group3,"D:\\aging\\fig_data\\F_Male.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 ggplot(sigScores_group3, aes(x=age, y=sigScores,color = region)) + 
@@ -749,7 +749,7 @@ colnames(extract_ggplotdata2)<-c("region","slope","sex")
   
   
 extract_ggplotdata_sex<-rbind(extract_ggplotdata1,extract_ggplotdata2)
-write.table(extract_ggplotdata_sex,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\G.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(extract_ggplotdata_sex,"D:\\aging\\fig_data\\G.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ggplot(extract_ggplotdata_sex, aes(x =reorder(region,-slope) , y=slope*1000, fill=sex)) +
   geom_bar(position=position_dodge(), stat="identity")+
