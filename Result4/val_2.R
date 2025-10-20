@@ -55,7 +55,7 @@ pbmc <- FindClusters(pbmc, resolution = 0.8)
 pbmc1 <- RunUMAP(pbmc, dims = 1:i, verbose = T)
 umap2<- pbmc1@reductions[["umap"]]@cell.embeddings
 umap3<-merge(umap2,sample_group,by="row.names")
-write.table(umap3,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\G.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(umap3,"D:\\aging\\fig_data\\G.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 #DimPlot(pbmc1, reduction = "umap")
@@ -106,7 +106,7 @@ write.table(sigScores_group,"sigScores_group.txt",col.names = T, row.names = F,s
 
 sigScores_group<-read.table("sigScores_group.txt",header=T,sep = "\t", quote = "")
 sigScores_group<-sigScores_group[sigScores_group$TEST_region == c("M1C","V1C","DFC"),]
-write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group,"D:\\aging\\fig_data\\H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 ggplot(sigScores_group,aes(x = celltype,y = sigScores)) +
   geom_violin(aes(color = celltype),cex=0.8,width=0.3)+
   geom_boxplot(aes(color = celltype),outlier.colour="black",width=0.1,cex=0.8)+
