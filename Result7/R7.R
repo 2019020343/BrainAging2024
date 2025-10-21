@@ -27,7 +27,7 @@ ggsurvplot(sfit,data = osdata,
            legend.title = "group",
            palette = c("#1f2a6b", "#446799","#a3ced6"))
 
-write.table(osdata,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\A.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(osdata,"D:\\aging\\fig_data\\SF8\\A.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 #################### CAS #######################
@@ -73,7 +73,7 @@ sigScores_group$group1[sigScores_group$Age < 60]="50"
 sigScores_group$group1[sigScores_group$Age < 50]="40"
 sigScores_group$group1[sigScores_group$Age < 40]="30"
 sigScores_group$group1[sigScores_group$Age < 30]="20"
-write.table(sigScores_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(sigScores_group,"D:\\aging\\fig_data\\SF8\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 P3<-ggplot(sigScores_group,aes(x=as.character(group1) ,y=as.numeric(sigScores) ,fill=as.character(group1)))+ 
@@ -140,7 +140,7 @@ output1$group[as.numeric(output1$icc_value)>=0]<-"0"
 output1$group[as.numeric(output1$icc_value)>=0.75]<-"75"
 output1$group[as.numeric(output1$icc_value)>=0.9]<-"9"
 
-write.table(output1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(output1,"D:\\aging\\fig_data\\SF8\\H.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ggplot(output1, aes(V1,as.numeric(icc_value))) +
   geom_jitter(aes(color = group), size = 0.001)+
@@ -246,7 +246,7 @@ ggplot(data, aes(x=x) ) +
   theme_classic()+
   labs(x="AUC",y="Density")
 
-write.table(data,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\H_RIGHT.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(data,"D:\\aging\\fig_data\\SF8\\H_RIGHT.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 ##############  RF_8 云雨图 ###################
 feature_fre_auc8<-read.table("D:\\aging\\RESULT\\6radiomic\\feature_fre_auc8.txt" , sep = "\t", header = T,stringsAsFactors = F)
@@ -317,8 +317,8 @@ for (j in 3:10) {
  agedatai_all<-rbind(agedatai_all,agedatai1)
 }
 
-write.table(df_ALL,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF10\\A_1.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
-write.table(agedatai_all,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF10\\A_2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(df_ALL,"D:\\aging\\fig_data\\SF10\\A_1.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(agedatai_all,"D:\\aging\\fig_data\\SF10\\A_2.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 ############## RF_CF COR ###################
@@ -513,7 +513,7 @@ RF_DATA<-rbind(Youngresult_BA1,Middleresult_BA1,Lateresult_BA1)
 RF_DATA_all<-rbind(RF_DATA_all,RF_DATA )
 }
 RF_DATA_all<-RF_DATA_all[,-12]
-write.table(RF_DATA_all,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\7\\B_Bottom.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(RF_DATA_all,"D:\\aging\\fig_data\\7\\B_Bottom.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 ########### GSVA ###############
@@ -677,7 +677,7 @@ pheatmap(gsva_mat_show_out1,
          gaps_col = c(7,23))
 result_all<-rbind(result_KEGG,result_GO)
 gsva_mat_all<-merge(gsva_mat_show,result_all,by="gene") [,1:42]
-write.table(gsva_mat_show_out1,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(gsva_mat_show_out1,"D:\\aging\\fig_data\\SF8\\D.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 
 corout2<-c()
@@ -757,7 +757,7 @@ ggplot(data = corout2_sig,aes(x=V1,y=V2_2))+
  xlab("")+
   ylab("")
 
-write.table(corout2_sig,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\7\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(corout2_sig,"D:\\aging\\fig_data\\7\\C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 GOBP<-read.table("D:\\aging\\RESULT\\6radiomic\\GOBP.txt",header=T,sep = "\t", quote = "",stringsAsFactors = F,check.names=FALSE)
 GOBP$V2<-toupper(GOBP$V2) 
@@ -806,7 +806,7 @@ xCell_group$group[xCell_group$Age>=12 & xCell_group$Age<20]="Adolescence"
 xCell_group$group[xCell_group$Age>=20 & xCell_group$Age<40]="Young"
 xCell_group$group[xCell_group$Age>=40 & xCell_group$Age<60]="Middle"
 xCell_group$group[xCell_group$Age>=60]="Late"
-write.table(xCell_group,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF9\\A-C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(xCell_group,"D:\\aging\\fig_data\\SF9\\A-C.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
 
 library(ggplot2)
 library(tidyverse)
@@ -839,7 +839,7 @@ library(irr)
 library("survival")
 library("survminer")
 osdata<-read.table("D:\\aging\\data\\GBM-NIHMS746836-supplement-78.txt" , sep = "\t", header = T,stringsAsFactors = F)
-coordinate<-read.table("D:\\aging\\投稿\\1-NC\\修稿1\\lobe\\TCGA_120_en.txt" , sep = "\t", header = T,stringsAsFactors = F)
+coordinate<-read.table("D:\\aging\\lobe\\TCGA_120_en.txt" , sep = "\t", header = T,stringsAsFactors = F)
 group_feature<-merge(osdata,coordinate,by.x = "Case",by.y = "sample")
 
 
@@ -877,4 +877,4 @@ ggsurvplot(sfit,data = osdata_out,
            legend = "top", 
            legend.title = "lobe",
            palette = c("#c5b5d1", "#12803b","#cacbd0"))
-write.table(osdata_out,"D:\\aging\\投稿\\1-NC\\修稿1\\fig_data\\SF8\\B.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
+write.table(osdata_out,"D:\\aging\\fig_data\\SF8\\B.txt",col.names = T, row.names = F,sep = "\t" ,append = FALSE, quote = F)
